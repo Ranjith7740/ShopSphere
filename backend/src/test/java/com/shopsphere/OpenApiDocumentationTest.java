@@ -29,4 +29,17 @@ class OpenApiDocumentationTest {
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("/api/auth/login")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("/api/users/me")));
     }
+
+    @Test
+    void openApiDocument_listsCategoryAndProductEndpoints() throws Exception {
+        mockMvc.perform(get("/v3/api-docs"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/api/categories")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/api/admin/categories")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/api/admin/categories/{categoryId}")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/api/products")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/api/products/{productId}")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/api/admin/products")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/api/admin/products/{productId}")));
+    }
 }
