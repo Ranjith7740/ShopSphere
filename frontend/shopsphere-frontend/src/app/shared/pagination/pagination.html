@@ -1,0 +1,22 @@
+<nav class="pagination" aria-label="Product pages">
+  <button type="button" [disabled]="isFirstPage()" (click)="previous()">
+    <span aria-hidden="true">&laquo;</span> Previous
+  </button>
+
+  @for (page of visiblePages(); track page) {
+    <button
+      type="button"
+      class="page-button"
+      [class.active]="page === currentPage()"
+      [attr.aria-current]="page === currentPage() ? 'page' : null"
+      [attr.aria-label]="'Page ' + (page + 1)"
+      (click)="goToPage(page)"
+    >
+      {{ page + 1 }}
+    </button>
+  }
+
+  <button type="button" [disabled]="isLastPage()" (click)="next()">
+    Next <span aria-hidden="true">&raquo;</span>
+  </button>
+</nav>

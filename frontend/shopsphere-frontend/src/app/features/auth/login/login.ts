@@ -10,7 +10,7 @@ import { resolveErrorMessage } from '../../../core/utils/http-error.util';
   selector: 'app-login',
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
-  styleUrl: './login.css'
+  styleUrl: './login.css',
 })
 export class Login {
   private readonly fb = inject(FormBuilder);
@@ -22,7 +22,7 @@ export class Login {
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]]
+    password: ['', [Validators.required]],
   });
 
   submit(): void {
@@ -46,7 +46,7 @@ export class Login {
       error: (err: HttpErrorResponse) => {
         this.loading.set(false);
         this.errorMessage.set(resolveErrorMessage(err, { 401: 'Invalid email or password.' }));
-      }
+      },
     });
   }
 }

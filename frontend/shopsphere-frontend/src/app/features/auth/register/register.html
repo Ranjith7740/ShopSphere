@@ -50,7 +50,8 @@
           @if (form.controls.password.hasError('required')) {
             Password is required.
           } @else if (form.controls.password.hasError('pattern')) {
-            Password must be at least 8 characters and include an uppercase letter, a lowercase letter, a digit and a special character (&#64;#$%^&amp;+=!).
+            Password must be at least 8 characters and include an uppercase letter, a lowercase
+            letter, a digit and a special character (&#64;#$%^&amp;+=!).
           } @else if (form.controls.password.hasError('server')) {
             {{ form.controls.password.getError('server') }}
           }

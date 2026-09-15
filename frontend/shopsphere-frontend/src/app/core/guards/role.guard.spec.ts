@@ -16,7 +16,7 @@ describe('roleGuard', () => {
     authServiceMock = { isLoggedIn: vi.fn(), getRole: vi.fn() };
 
     TestBed.configureTestingModule({
-      providers: [provideRouter([]), { provide: AuthService, useValue: authServiceMock }]
+      providers: [provideRouter([]), { provide: AuthService, useValue: authServiceMock }],
     });
   });
 
@@ -25,7 +25,7 @@ describe('roleGuard', () => {
     authServiceMock.getRole.mockReturnValue('ADMIN');
 
     const result = TestBed.runInInjectionContext(() =>
-      roleGuard(routeRequiring('ADMIN'), {} as never)
+      roleGuard(routeRequiring('ADMIN'), {} as never),
     );
 
     expect(result).toBe(true);
@@ -37,7 +37,7 @@ describe('roleGuard', () => {
     const router = TestBed.inject(Router);
 
     const result = TestBed.runInInjectionContext(() =>
-      roleGuard(routeRequiring('ADMIN'), {} as never)
+      roleGuard(routeRequiring('ADMIN'), {} as never),
     );
 
     expect(result).toEqual(router.createUrlTree(['/']));
@@ -48,7 +48,7 @@ describe('roleGuard', () => {
     const router = TestBed.inject(Router);
 
     const result = TestBed.runInInjectionContext(() =>
-      roleGuard(routeRequiring('ADMIN'), {} as never)
+      roleGuard(routeRequiring('ADMIN'), {} as never),
     );
 
     expect(result).toEqual(router.createUrlTree(['/login']));

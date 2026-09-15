@@ -1,0 +1,45 @@
+<section class="product-detail-page">
+  @if (invalidId()) {
+    <div class="status" role="alert">
+      <h1>Invalid product</h1>
+      <p>Invalid product.</p>
+      <a routerLink="/products">Back to Products</a>
+    </div>
+  } @else if (loading()) {
+    <p class="status" role="status">Loading product...</p>
+  } @else if (notFound()) {
+    <div class="status" role="alert">
+      <h1>Product not found</h1>
+      <p>We couldn't find the product you're looking for.</p>
+      <a routerLink="/products">Back to Products</a>
+    </div>
+  } @else if (error()) {
+    <div class="status status-error" role="alert">
+      <h1>Something went wrong</h1>
+      <p>{{ error() }}</p>
+      <button type="button" (click)="retry()">Retry</button>
+      <a routerLink="/products">Back to Products</a>
+    </div>
+  } @else if (product(); as loadedProduct) {
+    <a class="back-link" routerLink="/products">&laquo; Back to Products</a>
+
+    <div class="product-detail">
+      <!-- Placeholder until backend/S3 image support exists - same treatment as ProductCard's. -->
+      <div class="product-image-placeholder" aria-hidden="true"></div>
+
+      <div class="product-info">
+        <p class="product-category">{{ loadedProduct.categoryName }}</p>
+        <h1 class="product-name">{{ loadedProduct.name }}</h1>
+        <p class="product-price">{{ loadedProduct.price | number: '1.2-2' }}</p>
+
+        <p class="product-stock" [class.out-of-stock]="!inStock()">
+          {{ inStock() ? 'In Stock' : 'Out of Stock' }}
+        </p>
+
+        @if (loadedProduct.description) {
+          <p class="product-description">{{ loadedProduct.description }}</p>
+        }
+      </div>
+    </div>
+  }
+</section>

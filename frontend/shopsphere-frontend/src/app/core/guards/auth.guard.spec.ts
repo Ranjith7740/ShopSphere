@@ -12,16 +12,14 @@ describe('authGuard', () => {
     authServiceMock = { isLoggedIn: vi.fn() };
 
     TestBed.configureTestingModule({
-      providers: [provideRouter([]), { provide: AuthService, useValue: authServiceMock }]
+      providers: [provideRouter([]), { provide: AuthService, useValue: authServiceMock }],
     });
   });
 
   it('allows navigation when the user is logged in', () => {
     authServiceMock.isLoggedIn.mockReturnValue(true);
 
-    const result = TestBed.runInInjectionContext(() =>
-      authGuard({} as never, {} as never)
-    );
+    const result = TestBed.runInInjectionContext(() => authGuard({} as never, {} as never));
 
     expect(result).toBe(true);
   });
@@ -30,9 +28,7 @@ describe('authGuard', () => {
     authServiceMock.isLoggedIn.mockReturnValue(false);
     const router = TestBed.inject(Router);
 
-    const result = TestBed.runInInjectionContext(() =>
-      authGuard({} as never, {} as never)
-    );
+    const result = TestBed.runInInjectionContext(() => authGuard({} as never, {} as never));
 
     expect(result).toEqual(router.createUrlTree(['/login']));
   });
