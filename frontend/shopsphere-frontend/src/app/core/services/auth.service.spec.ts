@@ -6,7 +6,13 @@ import { AuthService } from './auth.service';
 import { UserResponse } from '../models/user.model';
 import { environment } from '../../../environments/environment';
 
-const USER: UserResponse = { id: 1, name: 'Test User', email: 'a@example.com', phone: '9876543210', role: 'CUSTOMER' };
+const USER: UserResponse = {
+  id: 1,
+  name: 'Test User',
+  email: 'a@example.com',
+  phone: '9876543210',
+  role: 'CUSTOMER',
+};
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -15,7 +21,7 @@ describe('AuthService', () => {
   beforeEach(() => {
     localStorage.clear();
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()]
+      providers: [provideHttpClient(), provideHttpClientTesting()],
     });
     service = TestBed.inject(AuthService);
     httpMock = TestBed.inject(HttpTestingController);
@@ -27,7 +33,12 @@ describe('AuthService', () => {
   });
 
   it('posts to /auth/register and returns the created user', () => {
-    const request = { name: 'A', email: 'a@example.com', phone: '9876543210', password: 'Passw0rd!' };
+    const request = {
+      name: 'A',
+      email: 'a@example.com',
+      phone: '9876543210',
+      password: 'Passw0rd!',
+    };
     let result: UserResponse | undefined;
 
     service.register(request).subscribe((r) => (result = r));
@@ -74,7 +85,7 @@ describe('AuthService', () => {
     httpMock.expectOne(`${environment.apiUrl}/auth/login`).flush({
       accessToken: 'a.b.c',
       tokenType: 'Bearer',
-      expiresInMs: 3600000
+      expiresInMs: 3600000,
     });
     httpMock.expectOne(`${environment.apiUrl}/users/me`).flush(USER);
 

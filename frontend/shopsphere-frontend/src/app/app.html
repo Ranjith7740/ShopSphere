@@ -2,6 +2,8 @@
   <span class="app-title">ShopSphere</span>
 
   <nav class="app-nav">
+    <a routerLink="/products">Products</a>
+
     @if (isAuthenticated()) {
       <span class="welcome">Welcome, {{ currentUser()?.name }}</span>
       <button type="button" class="link-button" (click)="logout()">Logout</button>

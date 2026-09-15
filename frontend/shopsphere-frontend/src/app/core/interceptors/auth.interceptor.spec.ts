@@ -22,8 +22,8 @@ describe('authInterceptor', () => {
         provideHttpClient(withInterceptors([authInterceptor])),
         provideHttpClientTesting(),
         provideRouter([]),
-        { provide: AuthService, useValue: authServiceMock }
-      ]
+        { provide: AuthService, useValue: authServiceMock },
+      ],
     });
 
     httpClient = TestBed.inject(HttpClient);

@@ -46,7 +46,7 @@ export class AuthService {
         // Fire-and-forget: the nav's "Welcome, <name>" fills in once this resolves,
         // but callers of login() only care about the login call itself succeeding.
         this.refreshCurrentUser().subscribe();
-      })
+      }),
     );
   }
 
@@ -55,9 +55,9 @@ export class AuthService {
   }
 
   updateCurrentUser(request: UpdateUserRequest): Observable<UserResponse> {
-    return this.http.put<UserResponse>(`${this.usersUrl}/me`, request).pipe(
-      tap((user) => this._currentUser.set(user))
-    );
+    return this.http
+      .put<UserResponse>(`${this.usersUrl}/me`, request)
+      .pipe(tap((user) => this._currentUser.set(user)));
   }
 
   refreshCurrentUser(): Observable<UserResponse> {

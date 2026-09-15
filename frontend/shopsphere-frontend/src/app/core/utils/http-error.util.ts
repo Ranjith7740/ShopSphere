@@ -14,7 +14,7 @@ const GENERIC_ERROR_MESSAGE = 'Something went wrong. Please try again.';
  */
 export function resolveErrorMessage(
   err: HttpErrorResponse,
-  statusMessages: Record<number, string> = {}
+  statusMessages: Record<number, string> = {},
 ): string {
   if (statusMessages[err.status]) {
     return statusMessages[err.status];

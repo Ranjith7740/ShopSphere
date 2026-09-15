@@ -26,9 +26,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const token = tokenStorage.getToken();
 
   const outgoingReq =
-    token && !isPublicPath
-      ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
-      : req;
+    token && !isPublicPath ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : req;
 
   return next(outgoingReq).pipe(
     catchError((err: unknown) => {
@@ -37,6 +35,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         router.navigateByUrl('/login');
       }
       return throwError(() => err);
-    })
+    }),
   );
 };

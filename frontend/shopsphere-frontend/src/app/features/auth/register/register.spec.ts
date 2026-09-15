@@ -12,7 +12,7 @@ const VALID_FORM = {
   name: 'Test User',
   email: 'a@example.com',
   phone: '9876543210',
-  password: 'Passw0rd!'
+  password: 'Passw0rd!',
 };
 
 describe('Register', () => {
@@ -23,7 +23,7 @@ describe('Register', () => {
 
     TestBed.configureTestingModule({
       imports: [Register],
-      providers: [provideRouter([]), { provide: AuthService, useValue: authServiceMock }]
+      providers: [provideRouter([]), { provide: AuthService, useValue: authServiceMock }],
     });
   });
 
@@ -46,7 +46,13 @@ describe('Register', () => {
   });
 
   it('navigates to "/login" after a successful registration', () => {
-    const created: UserResponse = { id: 1, name: 'Test User', email: 'a@example.com', phone: '9876543210', role: 'CUSTOMER' };
+    const created: UserResponse = {
+      id: 1,
+      name: 'Test User',
+      email: 'a@example.com',
+      phone: '9876543210',
+      role: 'CUSTOMER',
+    };
     authServiceMock.register.mockReturnValue(of(created));
     const fixture = TestBed.createComponent(Register);
     const navigateSpy = vi.spyOn(TestBed.inject(Router), 'navigateByUrl');
@@ -59,13 +65,17 @@ describe('Register', () => {
   });
 
   it('shows a clean message on duplicate email (409)', () => {
-    authServiceMock.register.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 409 })));
+    authServiceMock.register.mockReturnValue(
+      throwError(() => new HttpErrorResponse({ status: 409 })),
+    );
     const fixture = TestBed.createComponent(Register);
 
     fixture.componentInstance.form.setValue(VALID_FORM);
     fixture.componentInstance.submit();
 
-    expect(fixture.componentInstance.errorMessage()).toBe('An account with this email already exists.');
+    expect(fixture.componentInstance.errorMessage()).toBe(
+      'An account with this email already exists.',
+    );
     expect(fixture.componentInstance.loading()).toBe(false);
   });
 
@@ -77,8 +87,8 @@ describe('Register', () => {
         status: 400,
         message: 'Validation failed',
         path: '/api/auth/register',
-        fieldErrors: { phone: 'Phone must be exactly 10 digits' }
-      }
+        fieldErrors: { phone: 'Phone must be exactly 10 digits' },
+      },
     });
     authServiceMock.register.mockReturnValue(throwError(() => error));
     const fixture = TestBed.createComponent(Register);
@@ -86,7 +96,9 @@ describe('Register', () => {
     fixture.componentInstance.form.setValue(VALID_FORM);
     fixture.componentInstance.submit();
 
-    expect(fixture.componentInstance.form.controls.phone.getError('server')).toBe('Phone must be exactly 10 digits');
+    expect(fixture.componentInstance.form.controls.phone.getError('server')).toBe(
+      'Phone must be exactly 10 digits',
+    );
     expect(fixture.componentInstance.errorMessage()).toBe('Please fix the highlighted fields.');
   });
 });

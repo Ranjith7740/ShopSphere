@@ -13,7 +13,7 @@ const PHONE_PATTERN = /^[0-9]{10}$/;
   selector: 'app-register',
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './register.html',
-  styleUrl: './register.css'
+  styleUrl: './register.css',
 })
 export class Register {
   private readonly fb = inject(FormBuilder);
@@ -27,7 +27,7 @@ export class Register {
     name: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
     phone: ['', [Validators.required, Validators.pattern(PHONE_PATTERN)]],
-    password: ['', [Validators.required, Validators.pattern(PASSWORD_PATTERN)]]
+    password: ['', [Validators.required, Validators.pattern(PASSWORD_PATTERN)]],
   });
 
   submit(): void {
@@ -57,9 +57,9 @@ export class Register {
         }
 
         this.errorMessage.set(
-          resolveErrorMessage(err, { 409: 'An account with this email already exists.' })
+          resolveErrorMessage(err, { 409: 'An account with this email already exists.' }),
         );
-      }
+      },
     });
   }
 }

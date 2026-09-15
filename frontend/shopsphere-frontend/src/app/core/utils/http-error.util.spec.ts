@@ -7,7 +7,7 @@ describe('resolveErrorMessage', () => {
   it('uses the caller-supplied message for a matching status', () => {
     const err = new HttpErrorResponse({ status: 401 });
     expect(resolveErrorMessage(err, { 401: 'Invalid email or password.' })).toBe(
-      'Invalid email or password.'
+      'Invalid email or password.',
     );
   });
 
@@ -29,7 +29,13 @@ describe('applyServerFieldErrors', () => {
     const form = fb.nonNullable.group({ phone: [''] });
     const err = new HttpErrorResponse({
       status: 400,
-      error: { timestamp: '', status: 400, message: '', path: '', fieldErrors: { phone: 'bad phone' } }
+      error: {
+        timestamp: '',
+        status: 400,
+        message: '',
+        path: '',
+        fieldErrors: { phone: 'bad phone' },
+      },
     });
 
     expect(applyServerFieldErrors(form, err)).toBe(true);
@@ -48,7 +54,7 @@ describe('applyServerFieldErrors', () => {
     const form = fb.nonNullable.group({ phone: [''] });
     const err = new HttpErrorResponse({
       status: 400,
-      error: { timestamp: '', status: 400, message: '', path: '', fieldErrors: null }
+      error: { timestamp: '', status: 400, message: '', path: '', fieldErrors: null },
     });
 
     expect(applyServerFieldErrors(form, err)).toBe(false);
