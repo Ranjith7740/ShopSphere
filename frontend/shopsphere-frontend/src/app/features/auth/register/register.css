@@ -1,0 +1,48 @@
+.auth-card {
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.field label {
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+}
+
+.field input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.field-error {
+  color: #c62828;
+  font-size: 0.85rem;
+  margin: 0.25rem 0 0;
+}
+
+.form-error {
+  color: #c62828;
+  margin-bottom: 1rem;
+}
+
+button {
+  width: 100%;
+  padding: 0.6rem;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.switch-link {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
