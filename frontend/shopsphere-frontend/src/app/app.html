@@ -1,0 +1,17 @@
+<header class="app-header">
+  <span class="app-title">ShopSphere</span>
+
+  <nav class="app-nav">
+    @if (isAuthenticated()) {
+      <span class="welcome">Welcome, {{ currentUser()?.name }}</span>
+      <button type="button" class="link-button" (click)="logout()">Logout</button>
+    } @else {
+      <a routerLink="/login">Login</a>
+      <a routerLink="/register">Register</a>
+    }
+  </nav>
+</header>
+
+<main class="app-main">
+  <router-outlet />
+</main>
