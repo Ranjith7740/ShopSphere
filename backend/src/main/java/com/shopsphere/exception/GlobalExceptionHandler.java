@@ -102,6 +102,28 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
 
+    @ExceptionHandler(CartItemNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCartItemNotFound(CartItemNotFoundException ex,
+                                                                    HttpServletRequest request) {
+        ErrorResponse body = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    }
+
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<ErrorResponse> handleInsufficientStock(InsufficientStockException ex,
+                                                                     HttpServletRequest request) {
+        ErrorResponse body = new ErrorResponse(
+                HttpStatus.CONFLICT.value(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+    }
+
     @ExceptionHandler({InvalidSortException.class, InvalidPaginationException.class})
     public ResponseEntity<ErrorResponse> handleInvalidQueryParameter(RuntimeException ex,
                                                                         HttpServletRequest request) {
