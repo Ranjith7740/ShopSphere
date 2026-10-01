@@ -4,9 +4,13 @@ import { provideRouter } from '@angular/router';
 import { of, Subject, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
+import { signal } from '@angular/core';
+
 import { ProductList } from './product-list';
 import { ProductService } from '../../../core/services/product.service';
 import { CategoryService } from '../../../core/services/category.service';
+import { CartService } from '../../../core/services/cart.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { ProductPageResponse, ProductResponse } from '../../../core/models/product.model';
 import { CategoryResponse } from '../../../core/models/category.model';
 
@@ -67,6 +71,11 @@ describe('ProductList', () => {
         provideRouter([]),
         { provide: ProductService, useValue: productServiceMock },
         { provide: CategoryService, useValue: categoryServiceMock },
+        // ProductCard now injects CartService and AuthService - stub both so
+        // ProductList tests don't need real HttpClient providers just to
+        // render product cards.
+        { provide: CartService, useValue: { addItem: vi.fn() } },
+        { provide: AuthService, useValue: { isAuthenticated: signal(true) } },
       ],
     });
   });

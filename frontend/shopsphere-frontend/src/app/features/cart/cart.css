@@ -1,0 +1,77 @@
+.cart-page h1 {
+  margin: 0 0 1rem;
+}
+
+.status {
+  color: #555;
+}
+
+.status-error {
+  color: #c62828;
+}
+
+.status-error button {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.empty-cart {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.empty-cart a,
+.back-link {
+  display: inline-block;
+  color: #1a73e8;
+  text-decoration: none;
+}
+
+.back-link {
+  margin-bottom: 1rem;
+}
+
+.cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cart-summary {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.cart-total {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.clear-cart-button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.clear-cart-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Mobile: summary bar stacks below the items. */
+@media (max-width: 480px) {
+  .cart-summary {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

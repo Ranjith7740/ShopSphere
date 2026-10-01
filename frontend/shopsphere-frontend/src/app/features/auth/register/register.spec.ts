@@ -46,6 +46,8 @@ describe('Register', () => {
   });
 
   it('navigates to "/login" after a successful registration', () => {
+    vi.useFakeTimers();
+
     const created: UserResponse = {
       id: 1,
       name: 'Test User',
@@ -53,15 +55,21 @@ describe('Register', () => {
       phone: '9876543210',
       role: 'CUSTOMER',
     };
+
     authServiceMock.register.mockReturnValue(of(created));
+
     const fixture = TestBed.createComponent(Register);
     const navigateSpy = vi.spyOn(TestBed.inject(Router), 'navigateByUrl');
 
     fixture.componentInstance.form.setValue(VALID_FORM);
     fixture.componentInstance.submit();
 
+    vi.advanceTimersByTime(1200);
+
     expect(navigateSpy).toHaveBeenCalledWith('/login');
     expect(fixture.componentInstance.loading()).toBe(false);
+
+    vi.useRealTimers();
   });
 
   it('shows a clean message on duplicate email (409)', () => {

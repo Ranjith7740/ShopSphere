@@ -1,0 +1,51 @@
+<section class="cart-page">
+  <h1>Your Cart</h1>
+
+  @if (loading()) {
+    <p class="status" role="status">Loading cart...</p>
+  } @else if (error()) {
+    <div class="status status-error" role="alert">
+      <p>{{ error() }}</p>
+      <button type="button" (click)="retry()">Retry</button>
+    </div>
+  } @else if (cart(); as loadedCart) {
+    @if (loadedCart.items.length === 0) {
+      <div class="empty-cart status">
+        <p>Your cart is empty</p>
+        <a routerLink="/products">Continue Shopping</a>
+      </div>
+    } @else {
+      <a class="back-link" routerLink="/products">&laquo; Continue Shopping</a>
+
+      <div class="cart-items">
+        @for (item of loadedCart.items; track item.id) {
+          <app-cart-item
+            [item]="item"
+            [updating]="isUpdating(item.id)"
+            [removing]="isRemoving(item.id)"
+            [errorMessage]="itemError(item.id)"
+            (quantityChange)="onQuantityChange(item.id, $event)"
+            (remove)="onRemove(item.id)"
+          />
+        }
+      </div>
+
+      <div class="cart-summary">
+        <p class="cart-total">Total: {{ loadedCart.cartTotal | number: '1.2-2' }}</p>
+
+        @if (clearError()) {
+          <p class="status-error" role="alert">{{ clearError() }}</p>
+        }
+
+        <button
+          type="button"
+          class="clear-cart-button"
+          [disabled]="clearing()"
+          (click)="onClearCart()"
+        >
+          {{ clearing() ? 'Clearing…' : 'Clear Cart' }}
+        </button>
+      </div>
+    }
+  }
+</section>

@@ -1,0 +1,60 @@
+<article class="cart-item" [class.unavailable]="isUnavailable()">
+  <div class="cart-item-info">
+    <h3 class="cart-item-name">{{ item().productName }}</h3>
+    <p class="cart-item-price">{{ item().unitPrice | number: '1.2-2' }} each</p>
+
+    @if (isInactive()) {
+      <p class="availability-message" role="alert">&#10007; Product no longer available</p>
+    } @else if (isOutOfStock()) {
+      <p class="availability-message" role="alert">&#10007; Out of stock</p>
+    } @else if (isOverStock()) {
+      <p class="availability-message" role="alert">
+        &#9888; Only {{ item().availableStock }} left. Reduce quantity.
+      </p>
+    }
+
+    @if (errorMessage()) {
+      <p class="cart-item-error" role="alert">{{ errorMessage() }}</p>
+    }
+  </div>
+
+  <div class="cart-item-quantity">
+    <span class="quantity-label">Quantity:</span>
+    <div class="quantity-controls">
+      <button
+        type="button"
+        aria-label="Decrease quantity"
+        [disabled]="!canDecrement()"
+        (click)="decrement()"
+      >
+        &minus;
+      </button>
+      <span class="quantity-value" aria-live="polite">{{ item().quantity }}</span>
+      <button
+        type="button"
+        aria-label="Increase quantity"
+        [disabled]="!canIncrement()"
+        (click)="increment()"
+      >
+        +
+      </button>
+    </div>
+    <p class="available-stock">Available: {{ item().availableStock }}</p>
+  </div>
+
+  <div class="cart-item-subtotal">
+    <p>Subtotal: {{ item().subtotal | number: '1.2-2' }}</p>
+  </div>
+
+  <div class="cart-item-actions">
+    <button
+      type="button"
+      class="remove-button"
+      [attr.aria-label]="'Remove ' + item().productName + ' from cart'"
+      [disabled]="removing()"
+      (click)="onRemove()"
+    >
+      {{ removing() ? 'Removing…' : 'Remove' }}
+    </button>
+  </div>
+</article>

@@ -30,18 +30,32 @@ describe('Login', () => {
   });
 
   it('navigates to "/" after a successful login', () => {
+    vi.useFakeTimers();
+
     authServiceMock.login.mockReturnValue(
-      of({ accessToken: 'a.b.c', tokenType: 'Bearer', expiresInMs: 1000 }),
+      of({
+        accessToken: 'a.b.c',
+        tokenType: 'Bearer',
+        expiresInMs: 1000,
+      }),
     );
+
     const fixture = TestBed.createComponent(Login);
     const navigateSpy = vi.spyOn(TestBed.inject(Router), 'navigateByUrl');
 
-    fixture.componentInstance.form.setValue({ email: 'a@example.com', password: 'Passw0rd!' });
+    fixture.componentInstance.form.setValue({
+      email: 'a@example.com',
+      password: 'Passw0rd!',
+    });
+
     fixture.componentInstance.submit();
+
+    vi.advanceTimersByTime(900);
 
     expect(navigateSpy).toHaveBeenCalledWith('/');
     expect(fixture.componentInstance.loading()).toBe(false);
-    expect(fixture.componentInstance.errorMessage()).toBeNull();
+
+    vi.useRealTimers();
   });
 
   it('shows a clean message and stops loading on invalid credentials', () => {

@@ -5,6 +5,10 @@ import { provideRouter } from '@angular/router';
 
 import { App } from './app';
 
+// App itself no longer owns header/nav state (AuthService, CartService) -
+// that now lives in Navbar, rendered via <app-navbar> - so this only checks
+// that App composes correctly. Cart-badge behavior is covered in
+// navbar.spec.ts, where the logic actually lives.
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -19,10 +23,11 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render the app title', async () => {
+  it('renders the navbar and the router outlet', () => {
     const fixture = TestBed.createComponent(App);
-    await fixture.whenStable();
+    fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.app-title')?.textContent).toContain('ShopSphere');
+    expect(compiled.querySelector('app-navbar')).toBeTruthy();
+    expect(compiled.querySelector('main.app-main')).toBeTruthy();
   });
 });
