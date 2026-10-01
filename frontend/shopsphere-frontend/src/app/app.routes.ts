@@ -26,6 +26,11 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/products/product-detail/product-detail').then((m) => m.ProductDetail),
   },
+  {
+    path: 'cart',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/cart/cart').then((m) => m.Cart),
+  },
   // Temporary routes for manually verifying authGuard/roleGuard (Step 14A Part 7).
   // Remove once a real protected page (e.g. profile, admin dashboard) exists.
   {

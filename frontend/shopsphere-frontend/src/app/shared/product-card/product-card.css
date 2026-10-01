@@ -82,3 +82,47 @@
 .product-stock.out-of-stock {
   color: #c62828;
 }
+
+.product-card-actions {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.unavailable-message {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #c62828;
+}
+
+.add-to-cart-button {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #1a73e8;
+  border-radius: 4px;
+  background: #1a73e8;
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.add-to-cart-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  background: #999;
+  border-color: #999;
+}
+
+.add-success {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #2e7d32;
+}
+
+.add-error {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #c62828;
+}

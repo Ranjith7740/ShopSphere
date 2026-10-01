@@ -6,7 +6,10 @@ import { Subscription } from 'rxjs';
 
 import { ProductService } from '../../../core/services/product.service';
 import { ProductResponse } from '../../../core/models/product.model';
+import { CartService } from '../../../core/services/cart.service';
 import { resolveErrorMessage } from '../../../core/utils/http-error.util';
+
+const INSUFFICIENT_STOCK_MESSAGE = 'Not enough stock available for the requested quantity.';
 
 /**
  * Single product view, keyed entirely off the :productId route param. Kept
@@ -23,6 +26,7 @@ import { resolveErrorMessage } from '../../../core/utils/http-error.util';
 export class ProductDetail implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly productService = inject(ProductService);
+  private readonly cartService = inject(CartService);
 
   readonly loading = signal(false);
   readonly invalidId = signal(false);
@@ -31,6 +35,41 @@ export class ProductDetail implements OnInit, OnDestroy {
   readonly product = signal<ProductResponse | null>(null);
 
   readonly inStock = computed(() => (this.product()?.stockQuantity ?? 0) > 0);
+
+  // null while the loaded product can be added to the cart; otherwise the
+  // reason it can't - reused for both the quantity selector and the button.
+  readonly unavailableMessage = computed<string | null>(() => {
+    const product = this.product();
+    if (!product) {
+      return null;
+    }
+    if (product.status === 'INACTIVE') {
+      return 'Product no longer available';
+    }
+    if (product.stockQuantity <= 0) {
+      return 'Out of stock';
+    }
+    return null;
+  });
+
+  readonly quantity = signal(1);
+  readonly addingToCart = signal(false);
+  readonly added = signal(false);
+  readonly addError = signal<string | null>(null);
+
+  readonly canDecrementQuantity = computed(() => !this.addingToCart() && this.quantity() > 1);
+  readonly canIncrementQuantity = computed(() => {
+    const product = this.product();
+    return (
+      !!product &&
+      !this.addingToCart() &&
+      this.unavailableMessage() === null &&
+      this.quantity() < product.stockQuantity
+    );
+  });
+  readonly addToCartDisabled = computed(
+    () => this.addingToCart() || this.unavailableMessage() !== null,
+  );
 
   private productId: number | null = null;
   private paramSubscription: Subscription | undefined;
@@ -47,6 +86,42 @@ export class ProductDetail implements OnInit, OnDestroy {
 
   retry(): void {
     this.loadProduct();
+  }
+
+  incrementQuantity(): void {
+    if (!this.canIncrementQuantity()) {
+      return;
+    }
+    this.quantity.update((q) => q + 1);
+  }
+
+  decrementQuantity(): void {
+    if (!this.canDecrementQuantity()) {
+      return;
+    }
+    this.quantity.update((q) => q - 1);
+  }
+
+  addToCart(): void {
+    const product = this.product();
+    if (!product || this.addToCartDisabled()) {
+      return;
+    }
+
+    this.addingToCart.set(true);
+    this.added.set(false);
+    this.addError.set(null);
+
+    this.cartService.addItem({ productId: product.id, quantity: this.quantity() }).subscribe({
+      next: () => {
+        this.addingToCart.set(false);
+        this.added.set(true);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.addingToCart.set(false);
+        this.addError.set(resolveErrorMessage(err, { 409: INSUFFICIENT_STOCK_MESSAGE }));
+      },
+    });
   }
 
   private onRouteParamChange(rawId: string | null): void {
@@ -91,6 +166,9 @@ export class ProductDetail implements OnInit, OnDestroy {
       next: (product) => {
         this.product.set(product);
         this.loading.set(false);
+        this.quantity.set(1);
+        this.added.set(false);
+        this.addError.set(null);
       },
       error: (err: HttpErrorResponse) => {
         this.loading.set(false);

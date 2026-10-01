@@ -39,6 +39,52 @@
         @if (loadedProduct.description) {
           <p class="product-description">{{ loadedProduct.description }}</p>
         }
+
+        <div class="cart-actions">
+          @if (unavailableMessage()) {
+            <p class="unavailable-message" role="alert">{{ unavailableMessage() }}</p>
+          } @else {
+            <div class="quantity-selector">
+              <span class="quantity-label">Quantity:</span>
+              <div class="quantity-controls">
+                <button
+                  type="button"
+                  aria-label="Decrease quantity"
+                  [disabled]="!canDecrementQuantity()"
+                  (click)="decrementQuantity()"
+                >
+                  &minus;
+                </button>
+                <span class="quantity-value" aria-live="polite">{{ quantity() }}</span>
+                <button
+                  type="button"
+                  aria-label="Increase quantity"
+                  [disabled]="!canIncrementQuantity()"
+                  (click)="incrementQuantity()"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          }
+
+          <button
+            type="button"
+            class="add-to-cart-button"
+            [attr.aria-label]="'Add ' + loadedProduct.name + ' to cart'"
+            [disabled]="addToCartDisabled()"
+            (click)="addToCart()"
+          >
+            {{ addingToCart() ? 'Adding...' : 'Add to Cart' }}
+          </button>
+
+          @if (added()) {
+            <p class="add-success" role="status">Added to cart</p>
+          }
+          @if (addError()) {
+            <p class="add-error" role="alert">{{ addError() }}</p>
+          }
+        </div>
       </div>
     </div>
   }

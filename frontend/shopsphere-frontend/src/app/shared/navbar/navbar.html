@@ -1,0 +1,164 @@
+@if (showNavbar()) {
+  <header class="navbar">
+    <div class="navbar-container">
+      <!-- ================= LOGO ================= -->
+      <a routerLink="/" class="logo" (click)="closeMenus()">
+        <span class="logo-icon">
+          <i class="bi bi-bag-fill"></i>
+        </span>
+        <span class="logo-text"> Shop<span>Sphere</span> </span>
+      </a>
+
+      <!-- ================= DESKTOP NAV ================= -->
+      <nav class="desktop-menu">
+        <a
+          routerLink="/"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="nav-link"
+        >
+          <i class="bi bi-house-door"></i>
+          <span>Home</span>
+        </a>
+
+        <a routerLink="/products" routerLinkActive="active" class="nav-link">
+          <i class="bi bi-grid"></i>
+          <span>Products</span>
+        </a>
+
+        <!-- Future Categories can be added here -->
+        @if (isAuthenticated()) {
+          <!-- CART -->
+          <a routerLink="/cart" routerLinkActive="active" class="nav-link cart-link">
+            <span class="cart-icon-wrapper">
+              <i class="bi bi-cart3"></i>
+              @if (cartItemCount() !== null && cartItemCount()! > 0) {
+                <span class="cart-badge">
+                  {{ cartItemCount() }}
+                </span>
+              }
+            </span>
+            <span>Cart</span>
+          </a>
+
+          <!-- USER -->
+          <div class="account-wrapper">
+            <button type="button" class="account-button" (click)="toggleAccountMenu()">
+              <span class="avatar">
+                {{ currentUser()?.name?.charAt(0)?.toUpperCase() }}
+              </span>
+              <span class="username">
+                {{ currentUser()?.name }}
+              </span>
+              <i class="bi bi-chevron-down account-arrow" [class.rotate]="accountMenuOpen()"></i>
+            </button>
+
+            <!-- ACCOUNT DROPDOWN -->
+            @if (accountMenuOpen()) {
+              <div class="account-dropdown">
+                <div class="account-header">
+                  <span class="dropdown-avatar">
+                    {{ currentUser()?.name?.charAt(0)?.toUpperCase() }}
+                  </span>
+                  <div>
+                    <strong>{{ currentUser()?.name }}</strong>
+                    <small>ShopSphere Account</small>
+                  </div>
+                </div>
+                <div class="dropdown-divider"></div>
+                <!-- Future Profile / Orders / Settings can be added here -->
+                <button type="button" class="dropdown-logout" (click)="logout()">
+                  <i class="bi bi-box-arrow-right"></i>
+                  <span>Logout</span>
+                </button>
+              </div>
+            }
+          </div>
+        } @else {
+          <!-- LOGIN -->
+          <a routerLink="/login" class="login-btn">
+            <i class="bi bi-person"></i>
+            <span>Login</span>
+          </a>
+
+          <!-- REGISTER -->
+          <a routerLink="/register" class="register-btn"> Register </a>
+        }
+      </nav>
+
+      <!-- ================= MOBILE TOGGLE ================= -->
+      <button
+        type="button"
+        class="menu-toggle"
+        (click)="toggleMenu()"
+        [attr.aria-expanded]="menuOpen()"
+        aria-label="Toggle navigation"
+      >
+        @if (menuOpen()) {
+          <i class="bi bi-x-lg"></i>
+        } @else {
+          <i class="bi bi-list"></i>
+        }
+      </button>
+    </div>
+
+    <!-- ================= MOBILE MENU ================= -->
+    @if (menuOpen()) {
+      <div class="mobile-menu">
+        <a
+          routerLink="/"
+          routerLinkActive="mobile-active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          (click)="closeMenus()"
+        >
+          <i class="bi bi-house-door"></i>
+          <span>Home</span>
+        </a>
+
+        <a routerLink="/products" routerLinkActive="mobile-active" (click)="closeMenus()">
+          <i class="bi bi-grid"></i>
+          <span>Products</span>
+        </a>
+
+        @if (isAuthenticated()) {
+          <a routerLink="/cart" routerLinkActive="mobile-active" (click)="closeMenus()">
+            <span class="mobile-cart">
+              <i class="bi bi-cart3"></i>
+              <span>Cart</span>
+              @if (cartItemCount() !== null && cartItemCount()! > 0) {
+                <span class="mobile-cart-badge">
+                  {{ cartItemCount() }}
+                </span>
+              }
+            </span>
+          </a>
+
+          <div class="mobile-user">
+            <div class="mobile-user-info">
+              <span class="mobile-avatar">
+                {{ currentUser()?.name?.charAt(0)?.toUpperCase() }}
+              </span>
+              <div>
+                <strong>{{ currentUser()?.name }}</strong>
+                <small>ShopSphere Account</small>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" class="mobile-logout" (click)="logout()">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
+          </button>
+        } @else {
+          <div class="mobile-auth">
+            <a routerLink="/login" (click)="closeMenus()">
+              <i class="bi bi-person"></i>
+              Login
+            </a>
+            <a routerLink="/register" class="mobile-register" (click)="closeMenus()"> Register </a>
+          </div>
+        }
+      </div>
+    }
+  </header>
+}

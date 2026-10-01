@@ -1,1 +1,85 @@
-<p>Welcome to ShopSphere.</p>
+<section class="hero">
+  <!-- Background decoration -->
+  <div class="hero-bg hero-bg-left"></div>
+  <div class="hero-bg hero-bg-right"></div>
+  <div class="hero-container">
+    <!-- LEFT: Hero Content -->
+    <div class="hero-content">
+      <p class="hero-eyebrow">WELCOME TO SHOPSPHERE</p>
+      <h1>
+        Discover products
+        <span>you'll love.</span>
+      </h1>
+      <p class="hero-description">
+        Shop smarter. Live better. Discover products you'll love, all in one place.
+      </p>
+      <div class="hero-actions">
+        <a routerLink="/products" class="hero-btn hero-btn-primary">
+          Shop Now
+          <span>→</span>
+        </a>
+        <a routerLink="/categories" class="hero-btn hero-btn-secondary"> Explore Categories </a>
+      </div>
+    </div>
+
+    <!-- RIGHT: Hero Visual -->
+    <div class="hero-visual">
+      <!-- Soft glow behind the visual -->
+      <div class="video-glow"></div>
+
+      <!-- Decorative background circles -->
+      <div class="visual-circle visual-circle-one"></div>
+      <div class="visual-circle visual-circle-two"></div>
+
+      <!-- MAIN VIDEO CONTAINER -->
+      <div class="hero-video-wrapper">
+        <video class="hero-video" autoplay muted loop playsinline preload="metadata">
+          <source src="assets/videos/home-hero.mp4" type="video/mp4" />
+        </video>
+      </div>
+
+      <!-- WHITE SPACE DECORATIONS -->
+      <div class="video-white-space">
+        <!-- 1. BLUE SHOPPING CART CARD -->
+        <div class="floating-card cart-card">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 1.9-1.4L21 8H7"></path>
+            <circle cx="10" cy="20" r="1.4"></circle>
+            <circle cx="18" cy="20" r="1.4"></circle>
+          </svg>
+        </div>
+
+        <!-- 2. BLUE DISCOUNT TAG CARD -->
+        <div class="discount-card">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="7" y1="7" x2="7.01" y2="7"></line>
+          </svg>
+          <span class="discount-symbol">%</span>
+        </div>
+
+        <!-- 3. WHITE GIFT BOX CARD -->
+        <div class="floating-card gift-card">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 10h16v10H4z"></path>
+            <path d="M3 7h18v3H3z"></path>
+            <path d="M12 7v13"></path>
+            <path d="M12 7H8.5A2.5 2.5 0 1 1 11 4.5L12 7z"></path>
+            <path d="M12 7h3.5A2.5 2.5 0 1 0 13 4.5L12 7z"></path>
+          </svg>
+        </div>
+
+        <!-- AMBIENT SPHERES -->
+        <div class="ambient-sphere sphere-1"></div>
+        <div class="ambient-sphere sphere-2"></div>
+        <div class="ambient-sphere sphere-3"></div>
+      </div>
+    </div>
+  </div>
+</section>

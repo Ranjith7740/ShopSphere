@@ -1,72 +1,261 @@
-<div class="auth-card">
-  <h1>Register</h1>
+<div class="register-page" [class.page-loaded]="pageLoaded()">
+  <!-- ==========================================
+      LEFT PANEL
+ =========================================== -->
+  <section class="left-panel">
+    <!-- Background animation -->
+    <div class="background-orb orb-one"></div>
+    <div class="background-orb orb-two"></div>
+    <div class="background-orb orb-three"></div>
 
-  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-    <div class="field">
-      <label for="name">Name</label>
-      <input id="name" type="text" formControlName="name" autocomplete="name" />
-      @if (form.controls.name.touched && form.controls.name.invalid) {
-        <p class="field-error">Name is required.</p>
-      }
+    <!-- Logo -->
+    <a routerLink="/" class="logo" aria-label="Go to ShopSphere home">
+      <span class="brand">ShopSphere</span>
+    </a>
+
+    <!-- Steps -->
+    <div class="steps">
+      <div class="step active">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h4>Your Details</h4>
+          <p>Name, Email & Phone</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h4>Account Setup</h4>
+          <p>Create your account securely</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h4>Start Selling</h4>
+          <p>Manage products and orders</p>
+        </div>
+      </div>
     </div>
 
-    <div class="field">
-      <label for="email">Email</label>
-      <input id="email" type="email" formControlName="email" autocomplete="email" />
-      @if (form.controls.email.touched && form.controls.email.invalid) {
-        <p class="field-error">
-          @if (form.controls.email.hasError('required')) {
-            Email is required.
-          } @else if (form.controls.email.hasError('email')) {
-            Enter a valid email address.
-          } @else if (form.controls.email.hasError('server')) {
-            {{ form.controls.email.getError('server') }}
-          }
-        </p>
-      }
+    <!-- Illustration -->
+    <div class="illustration">
+      <div class="illustration-glow"></div>
+      <img src="assets/images/registerpageimage.jpg" alt="ShopSphere registration illustration" />
     </div>
 
-    <div class="field">
-      <label for="phone">Phone</label>
-      <input id="phone" type="tel" formControlName="phone" autocomplete="tel" />
-      @if (form.controls.phone.touched && form.controls.phone.invalid) {
-        <p class="field-error">
-          @if (form.controls.phone.hasError('required')) {
-            Phone is required.
-          } @else if (form.controls.phone.hasError('pattern')) {
-            Phone must be exactly 10 digits.
-          } @else if (form.controls.phone.hasError('server')) {
-            {{ form.controls.phone.getError('server') }}
-          }
-        </p>
-      }
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat">
+        <h2>700+</h2>
+        <p>Categories</p>
+      </div>
+
+      <div class="stat-divider"></div>
+
+      <div class="stat">
+        <h2>18,000+</h2>
+        <p>Sellers</p>
+      </div>
     </div>
 
-    <div class="field">
-      <label for="password">Password</label>
-      <input id="password" type="password" formControlName="password" autocomplete="new-password" />
-      @if (form.controls.password.touched && form.controls.password.invalid) {
-        <p class="field-error">
-          @if (form.controls.password.hasError('required')) {
-            Password is required.
-          } @else if (form.controls.password.hasError('pattern')) {
-            Password must be at least 8 characters and include an uppercase letter, a lowercase
-            letter, a digit and a special character (&#64;#$%^&amp;+=!).
-          } @else if (form.controls.password.hasError('server')) {
-            {{ form.controls.password.getError('server') }}
-          }
-        </p>
-      }
+    <!-- Requirements -->
+    <div class="requirements">
+      <h4>All you need to sell on</h4>
+      <ul>
+        <li>
+          <span>✓</span>
+          Email Address
+        </li>
+        <li>
+          <span>✓</span>
+          Mobile Number
+        </li>
+        <li>
+          <span>✓</span>
+          Secure Password
+        </li>
+      </ul>
     </div>
 
-    @if (errorMessage()) {
-      <p class="form-error">{{ errorMessage() }}</p>
+    <!-- Footer -->
+    <div class="footer-links">
+      <a href="javascript:void(0)"> Terms & Conditions </a>
+      <a href="javascript:void(0)"> Privacy Policy </a>
+    </div>
+
+    <div class="copyright">© 2026 ShopSphere. All rights reserved.</div>
+  </section>
+
+  <!-- ==========================================
+      RIGHT PANEL
+ =========================================== -->
+  <section class="right-panel">
+    <!-- Top link -->
+    <div class="top-link">
+      <span> Already a member? </span>
+      <a routerLink="/login"> Sign In </a>
+    </div>
+
+    <!-- ========================================
+        SUCCESS
+   ========================================= -->
+    @if (registerSuccess()) {
+      <div class="success-state">
+        <div class="success-circle">
+          <span> ✓ </span>
+        </div>
+        <h1>Account Created!</h1>
+        <p>Welcome to ShopSphere.</p>
+        <div class="success-message">Redirecting to login...</div>
+        <div class="success-loader"></div>
+      </div>
     }
 
-    <button type="submit" [disabled]="loading()">
-      {{ loading() ? 'Registering...' : 'Register' }}
-    </button>
-  </form>
+    <!-- ========================================
+        REGISTER FORM
+   ========================================= -->
+    @if (!registerSuccess()) {
+      <div class="auth-card">
+        <!-- Heading -->
+        <div class="heading-section">
+          <h1>
+            Get
+            <span>Started</span>
+          </h1>
+          <p>Create your account and start your shopping journey</p>
+        </div>
 
-  <p class="switch-link">Already have an account? <a routerLink="/login">Login</a></p>
+        <!-- Form -->
+        <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+          <!-- NAME -->
+          <div class="input-group">
+            <div class="input-icon">👤</div>
+            <input
+              id="name"
+              type="text"
+              formControlName="name"
+              placeholder="Full Name"
+              autocomplete="name"
+            />
+          </div>
+
+          @if (form.controls.name.touched && form.controls.name.invalid) {
+            <p class="field-error">Name is required.</p>
+          }
+
+          <!-- EMAIL -->
+          <div class="input-group">
+            <div class="input-icon">✉</div>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              placeholder="Email Address"
+              autocomplete="email"
+            />
+          </div>
+
+          @if (form.controls.email.touched && form.controls.email.invalid) {
+            <p class="field-error">
+              @if (form.controls.email.hasError('required')) {
+                Email is required.
+              } @else if (form.controls.email.hasError('email')) {
+                Enter a valid email address.
+              } @else if (form.controls.email.hasError('server')) {
+                {{ form.controls.email.getError('server') }}
+              }
+            </p>
+          }
+
+          <!-- PHONE -->
+          <div class="input-group">
+            <div class="input-icon">☎</div>
+            <input
+              id="phone"
+              type="tel"
+              formControlName="phone"
+              placeholder="Phone Number"
+              autocomplete="tel"
+              inputmode="numeric"
+            />
+          </div>
+
+          @if (form.controls.phone.touched && form.controls.phone.invalid) {
+            <p class="field-error">
+              @if (form.controls.phone.hasError('required')) {
+                Phone is required.
+              } @else if (form.controls.phone.hasError('pattern')) {
+                Phone must be exactly 10 digits.
+              } @else if (form.controls.phone.hasError('server')) {
+                {{ form.controls.phone.getError('server') }}
+              }
+            </p>
+          }
+
+          <!-- PASSWORD -->
+          <div class="input-group">
+            <div class="input-icon">🔒</div>
+            <input
+              id="password"
+              [type]="showPassword() ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="Create Password"
+              autocomplete="new-password"
+            />
+            <button type="button" class="password-toggle" (click)="togglePassword()">
+              @if (showPassword()) {
+                ◉
+              } @else {
+                ◌
+              }
+            </button>
+          </div>
+
+          @if (form.controls.password.touched && form.controls.password.invalid) {
+            <p class="field-error">
+              @if (form.controls.password.hasError('required')) {
+                Password is required.
+              } @else if (form.controls.password.hasError('pattern')) {
+                Password must contain uppercase, lowercase, number and special character.
+              } @else if (form.controls.password.hasError('server')) {
+                {{ form.controls.password.getError('server') }}
+              }
+            </p>
+          }
+
+          <!-- SERVER ERROR -->
+          @if (errorMessage()) {
+            <p class="form-error error-shake">
+              <span class="error-icon"> ! </span>
+              {{ errorMessage() }}
+            </p>
+          }
+
+          <!-- REGISTER BUTTON -->
+          <button type="submit" class="register-btn" [disabled]="loading()">
+            @if (loading()) {
+              <span class="button-spinner"></span>
+              <span> Registering... </span>
+            } @else {
+              <span> Create Account </span>
+              <span class="button-arrow"> → </span>
+            }
+          </button>
+
+          <!-- Bottom link -->
+          <p class="switch-link">
+            Already have an account?
+            <a routerLink="/login"> Login </a>
+          </p>
+          <a routerLink="/" class="back-to-shopping">
+            <i class="bi bi-arrow-left"></i>
+            Back to shopping
+          </a>
+        </form>
+      </div>
+    }
+  </section>
 </div>

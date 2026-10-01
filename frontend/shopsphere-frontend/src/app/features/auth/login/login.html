@@ -1,42 +1,201 @@
-<div class="auth-card">
-  <h1>Login</h1>
+<div class="login-page" [class.page-loaded]="pageLoaded()">
+  <!-- ==========================================
 
-  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-    <div class="field">
-      <label for="email">Email</label>
-      <input id="email" type="email" formControlName="email" autocomplete="email" />
-      @if (form.controls.email.touched && form.controls.email.invalid) {
-        <p class="field-error">
-          @if (form.controls.email.hasError('required')) {
-            Email is required.
-          } @else if (form.controls.email.hasError('email')) {
-            Enter a valid email address.
-          }
-        </p>
-      }
+       LEFT PANEL
+
+  =========================================== -->
+  <section class="left-panel">
+    <!-- Animated background elements -->
+    <div class="background-orb orb-one"></div>
+    <div class="background-orb orb-two"></div>
+    <div class="background-orb orb-three"></div>
+    <!-- Logo -->
+    <a routerLink="/" class="logo" aria-label="Go to ShopSphere home">
+      <span class="brand">ShopSphere</span>
+    </a>
+
+    <!-- Illustration -->
+    <div class="illustration">
+      <div class="illustration-glow"></div>
+      <img src="assets/images/loginpageimage.jpg" alt="ShopSphere online shopping illustration" />
     </div>
 
-    <div class="field">
-      <label for="password">Password</label>
-      <input
-        id="password"
-        type="password"
-        formControlName="password"
-        autocomplete="current-password"
-      />
-      @if (form.controls.password.touched && form.controls.password.invalid) {
-        <p class="field-error">Password is required.</p>
-      }
+    <!-- Features -->
+    <div class="features">
+      <h2>Why ShopSphere?</h2>
+      <ul>
+        <li>
+          <span class="check">✓</span>
+          <span>Sell products across India</span>
+        </li>
+        <li>
+          <span class="check">✓</span>
+          <span>Grow your business online</span>
+        </li>
+        <li>
+          <span class="check">✓</span>
+          <span>Easy order management</span>
+        </li>
+        <li>
+          <span class="check">✓</span>
+          <span>Secure and fast transactions</span>
+        </li>
+      </ul>
     </div>
 
-    @if (errorMessage()) {
-      <p class="form-error">{{ errorMessage() }}</p>
+    <!-- Copyright -->
+    <div class="copyright">© 2026 ShopSphere. All rights reserved.</div>
+  </section>
+
+  <!-- ==========================================
+
+       RIGHT PANEL
+
+  =========================================== -->
+  <section class="right-panel">
+    <!-- Top navigation -->
+    <div class="top-link">
+      <span> Don't have an account? </span>
+      <a routerLink="/register"> Sign Up </a>
+    </div>
+
+    <!-- ========================================
+
+         SUCCESS STATE
+
+    ========================================= -->
+
+    @if (loginSuccess()) {
+      <div class="success-state">
+        <div class="success-circle">
+          <span>✓</span>
+        </div>
+        <h1>Login Successful</h1>
+        <p>Welcome back to ShopSphere.</p>
+        <div class="success-loader"></div>
+      </div>
     }
 
-    <button type="submit" [disabled]="loading()">
-      {{ loading() ? 'Logging in...' : 'Login' }}
-    </button>
-  </form>
+    <!-- ========================================
 
-  <p class="switch-link">Don't have an account? <a routerLink="/register">Register</a></p>
+         LOGIN FORM
+
+    ========================================= -->
+
+    @if (!loginSuccess()) {
+      <div class="auth-card">
+        <!-- Icon -->
+        <div class="icon-circle">
+          <svg class="user-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="8" r="4"></circle>
+            <path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"></path>
+          </svg>
+        </div>
+
+        <!-- Heading -->
+        <div class="heading-section">
+          <h1>Login to your account</h1>
+          <p>Welcome back, you've been missed!</p>
+        </div>
+
+        <!-- Form -->
+        <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+          <!-- EMAIL -->
+          <div class="input-wrapper">
+            <div class="input-icon">✉</div>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              placeholder="Email Address"
+              autocomplete="email"
+            />
+          </div>
+
+          @if (form.controls.email.touched && form.controls.email.invalid) {
+            <p class="field-error">
+              @if (form.controls.email.hasError('required')) {
+                Email is required.
+              } @else if (form.controls.email.hasError('email')) {
+                Enter a valid email address.
+              }
+            </p>
+          }
+
+          <!-- PASSWORD -->
+          <div class="input-wrapper">
+            <div class="input-icon">🔒</div>
+            <input
+              id="password"
+              [type]="showPassword() ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="Password"
+              autocomplete="current-password"
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              (click)="togglePassword()"
+              [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+            >
+              @if (showPassword()) {
+                ◉
+              } @else {
+                ◌
+              }
+            </button>
+          </div>
+
+          @if (form.controls.password.touched && form.controls.password.invalid) {
+            <p class="field-error">Password is required.</p>
+          }
+
+          <!-- OPTIONS -->
+          <div class="options">
+            <label class="remember">
+              <input type="checkbox" />
+              <span> Remember Me </span>
+            </label>
+            <a href="javascript:void(0)" class="forgot-password"> Forgot Password? </a>
+          </div>
+
+          <!-- SERVER ERROR -->
+
+          @if (errorMessage()) {
+            <p class="form-error error-shake">
+              <span class="error-icon">!</span>
+
+              {{ errorMessage() }}
+            </p>
+          }
+
+          <!-- LOGIN BUTTON -->
+          <button
+            type="submit"
+            class="login-btn"
+            [disabled]="loading()"
+            [class.is-loading]="loading()"
+          >
+            @if (loading()) {
+              <span class="button-spinner"></span>
+              <span> Logging in... </span>
+            } @else {
+              <span> Login </span>
+              <span class="button-arrow"> → </span>
+            }
+          </button>
+
+          <!-- Bottom link -->
+          <p class="switch-link">
+            Don't have an account?
+            <a routerLink="/register"> Create Account </a>
+          </p>
+          <a routerLink="/" class="back-to-shopping">
+            <i class="bi bi-arrow-left"></i>
+            Back to shopping
+          </a>
+        </form>
+      </div>
+    }
+  </section>
 </div>
