@@ -51,4 +51,13 @@ class OpenApiDocumentationTest {
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("/api/cart/items")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("/api/cart/items/{cartItemId}")));
     }
+
+    @Test
+    void openApiDocument_listsAddressEndpoints() throws Exception {
+        mockMvc.perform(get("/v3/api-docs"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/api/users/me/addresses")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/api/users/me/addresses/{addressId}")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("/api/users/me/addresses/{addressId}/default")));
+    }
 }

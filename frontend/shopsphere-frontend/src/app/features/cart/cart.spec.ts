@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { Observable, Subject, of, tap, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
@@ -416,6 +416,34 @@ describe('Cart', () => {
     removeButtons[0].click();
 
     expect(cartService.removeItemImpl).toHaveBeenCalledWith(10);
+  });
+
+  it('shows a Proceed to Checkout button when the cart has items', () => {
+    cartService.getCartImpl = vi.fn().mockReturnValue(of(CART));
+    const fixture = setup();
+
+    const button: HTMLButtonElement = fixture.nativeElement.querySelector('.checkout-button');
+    expect(button).toBeTruthy();
+    expect(button.textContent).toContain('Proceed to Checkout');
+  });
+
+  it('does not show a Proceed to Checkout button when the cart is empty', () => {
+    cartService.getCartImpl = vi.fn().mockReturnValue(of(EMPTY_CART));
+    const fixture = setup();
+
+    expect(fixture.nativeElement.querySelector('.checkout-button')).toBeNull();
+  });
+
+  it('navigates to /checkout when Proceed to Checkout is clicked', () => {
+    cartService.getCartImpl = vi.fn().mockReturnValue(of(CART));
+    const fixture = setup();
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    const button: HTMLButtonElement = fixture.nativeElement.querySelector('.checkout-button');
+    button.click();
+
+    expect(navigateSpy).toHaveBeenCalledWith(['/checkout']);
   });
 
   it('renders accessible labels for quantity controls and remove actions', () => {

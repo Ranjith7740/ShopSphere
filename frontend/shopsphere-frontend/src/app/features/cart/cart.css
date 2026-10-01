@@ -68,6 +68,16 @@
   opacity: 0.5;
 }
 
+.checkout-button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #1a73e8;
+  border-radius: 4px;
+  background: #1a73e8;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 /* Mobile: summary bar stacks below the items. */
 @media (max-width: 480px) {
   .cart-summary {

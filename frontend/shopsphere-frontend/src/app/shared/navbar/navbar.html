@@ -66,7 +66,11 @@
                   </div>
                 </div>
                 <div class="dropdown-divider"></div>
-                <!-- Future Profile / Orders / Settings can be added here -->
+                <a routerLink="/profile" class="dropdown-link" (click)="closeMenus()">
+                  <i class="bi bi-person-circle"></i>
+                  <span>Profile</span>
+                </a>
+                <!-- Future Orders / Settings can be added here -->
                 <button type="button" class="dropdown-logout" (click)="logout()">
                   <i class="bi bi-box-arrow-right"></i>
                   <span>Logout</span>
@@ -144,6 +148,11 @@
               </div>
             </div>
           </div>
+
+          <a routerLink="/profile" (click)="closeMenus()">
+            <i class="bi bi-person-circle"></i>
+            <span>Profile</span>
+          </a>
 
           <button type="button" class="mobile-logout" (click)="logout()">
             <i class="bi bi-box-arrow-right"></i>

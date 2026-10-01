@@ -1,0 +1,83 @@
+<section class="addresses-page">
+  <h1>Your Addresses</h1>
+
+  @if (loading()) {
+    <p class="status" role="status">Loading addresses...</p>
+  } @else if (error()) {
+    <div class="status status-error" role="alert">
+      <p>{{ error() }}</p>
+      <button type="button" (click)="retry()">Retry</button>
+    </div>
+  } @else {
+    @if (successMessage()) {
+      <p class="status status-success" role="status">{{ successMessage() }}</p>
+    }
+
+    @if (showForm()) {
+      <app-address-form
+        [address]="editingAddress()"
+        (saved)="onSaved()"
+        (cancelled)="closeForm()"
+      />
+    } @else if (addresses().length === 0) {
+      <div class="empty-state status">
+        <p>No saved addresses</p>
+        <button type="button" (click)="openAddForm()">Add Address</button>
+      </div>
+    } @else {
+      <button type="button" class="add-address-button" (click)="openAddForm()">Add Address</button>
+
+      <div class="address-list">
+        @for (address of addresses(); track address.id) {
+          <article class="address-card">
+            <div class="address-card-header">
+              <span class="address-type">{{ address.type }}</span>
+              @if (address.isDefault) {
+                <span class="default-badge">Default</span>
+              }
+            </div>
+
+            <p class="address-name">{{ address.fullName }}</p>
+            <p>{{ address.phone }}</p>
+            <p>{{ address.addressLine1 }}</p>
+            @if (address.addressLine2) {
+              <p>{{ address.addressLine2 }}</p>
+            }
+            <p>{{ address.city }}</p>
+            <p>{{ address.state }}</p>
+            <p>{{ address.postalCode }}</p>
+            <p>{{ address.country }}</p>
+
+            @if (rowErrorFor(address.id)) {
+              <p class="status-error" role="alert">{{ rowErrorFor(address.id) }}</p>
+            }
+
+            <div class="address-actions">
+              <button type="button" (click)="openEditForm(address)" aria-label="Edit address">
+                Edit
+              </button>
+              <button
+                type="button"
+                [disabled]="isDeleting(address.id)"
+                (click)="onDelete(address)"
+                aria-label="Delete address"
+              >
+                {{ isDeleting(address.id) ? 'Deleting…' : 'Delete' }}
+              </button>
+              @if (!address.isDefault) {
+                <button
+                  type="button"
+                  [disabled]="isSettingDefault(address.id)"
+                  (click)="onSetDefault(address)"
+                  aria-label="Set as default address"
+                >
+                  {{ isSettingDefault(address.id) ? 'Setting…' : 'Set as Default' }}
+                </button>
+              }
+            </div>
+          </article>
+        }
+      </div>
+    }
+  }
+</section>
