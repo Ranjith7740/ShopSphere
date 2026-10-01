@@ -1,0 +1,27 @@
+.profile-page h1 {
+  margin: 0 0 1rem;
+}
+
+.profile-summary {
+  margin-bottom: 1.5rem;
+}
+
+.profile-summary p {
+  margin: 0 0 0.25rem;
+}
+
+.profile-name {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.profile-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.profile-links a {
+  color: #1a73e8;
+  text-decoration: none;
+}

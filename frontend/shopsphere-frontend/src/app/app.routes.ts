@@ -31,8 +31,22 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./features/cart/cart').then((m) => m.Cart),
   },
+  {
+    path: 'profile',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/profile/profile').then((m) => m.Profile),
+  },
+  {
+    path: 'profile/addresses',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/profile/addresses/addresses').then((m) => m.Addresses),
+  },
+  {
+    path: 'checkout',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/checkout/checkout').then((m) => m.Checkout),
+  },
   // Temporary routes for manually verifying authGuard/roleGuard (Step 14A Part 7).
-  // Remove once a real protected page (e.g. profile, admin dashboard) exists.
   {
     path: 'protected-test',
     canActivate: [authGuard],

@@ -18,7 +18,7 @@
           Shop Now
           <span>→</span>
         </a>
-        <a routerLink="/categories" class="hero-btn hero-btn-secondary"> Explore Categories </a>
+        <a href="#categories" class="hero-btn hero-btn-secondary"> Explore Categories </a>
       </div>
     </div>
 
@@ -83,3 +83,540 @@
     </div>
   </div>
 </section>
+<!-- =====================================================
+
+     SHOP BY CATEGORY
+
+====================================================== -->
+<section id="categories" class="categories-section">
+  <div class="categories-container">
+    <!-- Section heading -->
+    <div class="section-heading">
+      <div class="section-heading-content">
+        <p class="section-eyebrow">EXPLORE COLLECTIONS</p>
+        <h2>Shop by Category</h2>
+        <p class="section-description">Discover products across all your favorite categories.</p>
+      </div>
+      <a routerLink="/products" class="view-all-link">
+        View All Products
+        <span>→</span>
+      </a>
+    </div>
+
+    <!-- Loading -->
+
+    @if (categoriesLoading()) {
+      <div class="categories-grid">
+        @for (item of [1, 2, 3]; track item) {
+          <div class="category-skeleton">
+            <div class="skeleton-icon"></div>
+            <div class="skeleton-content">
+              <div class="skeleton-line skeleton-title"></div>
+              <div class="skeleton-line skeleton-description"></div>
+              <div class="skeleton-line skeleton-link"></div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Error -->
+
+    @else if (categoriesError()) {
+      <div class="categories-message">
+        <div class="message-icon">!</div>
+        <h3>Categories couldn't be loaded</h3>
+        <p>Please refresh the page and try again.</p>
+      </div>
+    }
+
+    <!-- Real categories -->
+
+    @else {
+      <div class="categories-grid">
+        @for (category of categories(); track category.id; let index = $index) {
+          <a
+            class="category-card"
+            [routerLink]="['/products']"
+            [queryParams]="{
+              category: category.name,
+            }"
+          >
+            <!-- Decorative glow -->
+            <div class="category-glow"></div>
+            <!-- Decorative circle -->
+            <div class="category-circle"></div>
+
+            <!-- Category icon -->
+            <div
+              class="category-icon"
+              [class.category-icon-blue]="index % 3 === 0"
+              [class.category-icon-purple]="index % 3 === 1"
+              [class.category-icon-soft]="index % 3 === 2"
+            >
+              @switch (index % 6) {
+                @case (0) {
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 7h16l-1 13H5L4 7z"></path>
+                    <path d="M8 7a4 4 0 0 1 8 0"></path>
+                  </svg>
+                }
+
+                @case (1) {
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="5" y="4" width="14" height="16" rx="2"></rect>
+                    <path d="M9 8h6"></path>
+                    <path d="M9 12h6"></path>
+                    <path d="M9 16h3"></path>
+                  </svg>
+                }
+
+                @case (2) {
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 10h16"></path>
+                    <path d="M6 10v9"></path>
+                    <path d="M18 10v9"></path>
+                    <path d="M3 19h18"></path>
+                    <path d="M5 10l7-6 7 6"></path>
+                  </svg>
+                }
+
+                @case (3) {
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="8"></circle>
+                    <path d="M8 13c1.5 2 6.5 2 8 0"></path>
+                    <circle cx="9" cy="9" r="1"></circle>
+                    <circle cx="15" cy="9" r="1"></circle>
+                  </svg>
+                }
+
+                @case (4) {
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 19l4-8 3 4 3-7 4 11H5z"></path>
+                  </svg>
+                }
+
+                @case (5) {
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 4h14v16H5z"></path>
+                    <path d="M8 8h8"></path>
+                    <path d="M8 12h8"></path>
+                    <path d="M8 16h5"></path>
+                  </svg>
+                }
+              }
+            </div>
+
+            <!-- Category text -->
+            <div class="category-content">
+              <h3>
+                {{ category.name }}
+              </h3>
+              <p>Explore products in this category.</p>
+              <span class="category-explore">
+                Explore
+                <b>→</b>
+              </span>
+            </div>
+
+            <!-- =====================================
+
+                 CATEGORY IMAGE
+
+                 Images are directly referenced here.
+
+                 No TS mapping.
+
+            ====================================== -->
+
+            @if (category.name === 'Consumer Electronics') {
+              <div class="category-image-wrapper">
+                <img
+                  src="assets/images/categories/consumer-electronics.jpg"
+                  alt="Consumer Electronics"
+                  class="category-image"
+                  loading="lazy"
+                />
+              </div>
+            }
+
+            @if (category.name === 'Electronics') {
+              <div class="category-image-wrapper">
+                <img
+                  src="assets/images/categories/electronics.jpg"
+                  alt="Electronics"
+                  class="category-image"
+                  loading="lazy"
+                />
+              </div>
+            }
+
+            @if (category.name === 'Shopping') {
+              <div class="category-image-wrapper">
+                <img
+                  src="assets/images/categories/shopping.jpg"
+                  alt="Shopping"
+                  class="category-image"
+                  loading="lazy"
+                />
+              </div>
+            }
+
+            <!-- Top-right arrow -->
+            <div class="category-arrow">→</div>
+          </a>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- =========================
+
+     FEATURED PRODUCTS
+
+     ========================= -->
+<section class="featured-section">
+  <div class="featured-container">
+    <div class="section-heading">
+      <div class="section-heading-content">
+        <p class="section-eyebrow">LATEST ARRIVALS</p>
+        <h2>Featured Products</h2>
+        <p class="section-description">Discover some of our newest products, selected for you.</p>
+      </div>
+      <a routerLink="/products" class="view-all-link">
+        View All Products
+        <span>→</span>
+      </a>
+    </div>
+
+    <!-- Loading -->
+
+    @if (featuredProductsLoading()) {
+      <div class="featured-grid">
+        @for (item of [1, 2, 3, 4]; track item) {
+          <div class="product-skeleton">
+            <div class="product-skeleton-image"></div>
+            <div class="product-skeleton-content">
+              <div class="product-skeleton-line title"></div>
+              <div class="product-skeleton-line category"></div>
+              <div class="product-skeleton-line price"></div>
+              <div class="product-skeleton-button"></div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Error -->
+
+    @else if (featuredProductsError()) {
+      <div class="featured-message">
+        <div class="message-icon">!</div>
+        <h3>Products couldn't be loaded</h3>
+        <p>Please visit the products page or refresh the page and try again.</p>
+        <a routerLink="/products" class="message-button"> Browse Products </a>
+      </div>
+    }
+
+    <!-- Empty -->
+
+    @else if (featuredProducts().length === 0) {
+      <div class="featured-message">
+        <div class="message-icon">×</div>
+        <h3>No products available</h3>
+        <p>There are currently no products available to display.</p>
+        <a routerLink="/products" class="message-button"> Browse Products </a>
+      </div>
+    }
+
+    <!-- Products -->
+
+    @else {
+      <div class="featured-grid">
+        @for (product of featuredProducts(); track product.id) {
+          <div class="featured-product-card">
+            <div class="featured-badge">New</div>
+            <app-product-card [product]="product" />
+          </div>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- =========================
+
+     WHY CHOOSE SHOPSPHERE
+
+     ========================= -->
+<section class="why-shop-section">
+  <div class="why-shop-container">
+    <div class="why-shop-heading">
+      <p class="why-shop-eyebrow">WHY CHOOSE SHOPSPHERE</p>
+      <h2>Why Choose ShopSphere?</h2>
+      <p>Everything you need for a smarter shopping experience.</p>
+    </div>
+
+    <div class="why-shop-grid">
+      <!-- Fast Delivery -->
+      <article class="why-shop-card">
+        <div class="why-shop-icon delivery-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 6h11v10H3z"></path>
+            <path d="M14 9h4l3 3v4h-7z"></path>
+            <circle cx="7" cy="18" r="2"></circle>
+            <circle cx="18" cy="18" r="2"></circle>
+          </svg>
+        </div>
+        <div class="why-shop-content">
+          <h3>Fast Delivery</h3>
+          <p>Get your orders delivered quickly and reliably.</p>
+        </div>
+      </article>
+
+      <!-- Secure Shopping -->
+      <article class="why-shop-card">
+        <div class="why-shop-icon secure-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"></path>
+            <path d="M9 12l2 2 4-4"></path>
+          </svg>
+        </div>
+        <div class="why-shop-content">
+          <h3>Secure Shopping</h3>
+          <p>Your account and transactions are protected.</p>
+        </div>
+      </article>
+
+      <!-- Quality Products -->
+      <article class="why-shop-card">
+        <div class="why-shop-icon quality-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9z"></path>
+          </svg>
+        </div>
+        <div class="why-shop-content">
+          <h3>Quality Products</h3>
+          <p>Carefully selected products from trusted categories.</p>
+        </div>
+      </article>
+
+      <!-- Easy Returns -->
+      <article class="why-shop-card">
+        <div class="why-shop-icon returns-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7l8-4 8 4-8 4z"></path>
+            <path d="M4 7v10l8 4 8-4V7"></path>
+            <path d="M12 11v10"></path>
+            <path d="M8 15l-3-3"></path>
+            <path d="M5 12h6"></path>
+          </svg>
+        </div>
+        <div class="why-shop-content">
+          <h3>Easy Returns</h3>
+          <p>A simple and convenient return process.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- =========================
+
+     STEP 6 — COLLECTION BANNER
+
+     ========================= -->
+<section class="collection-banner-section">
+  <div class="collection-banner">
+    <div class="collection-banner-content">
+      <p class="collection-eyebrow">EXPLORE THE COLLECTION</p>
+      <h2>
+        Discover products<br />
+
+        you'll love.
+      </h2>
+      <p class="collection-description">
+        Explore electronics, everyday essentials and more, all in one place.
+      </p>
+      <a routerLink="/products" class="collection-button">
+        Explore Products
+        <span>→</span>
+      </a>
+    </div>
+
+    <div class="collection-visual">
+      <div class="visual-circle visual-circle-one"></div>
+      <div class="visual-circle visual-circle-two"></div>
+      <div class="visual-glow"></div>
+      <div class="collection-image-card">
+        <img
+          src="assets/images/categories/consumer-electronics.png"
+          alt="Consumer electronics"
+          loading="lazy"
+        />
+      </div>
+      <div class="floating-product-card">
+        <span class="floating-dot"></span>
+        <span>Shop smarter</span>
+      </div>
+      <div class="floating-star">✦</div>
+    </div>
+  </div>
+</section>
+<!-- =========================
+    STEP 7 — NEWSLETTER
+    ========================= -->
+<section class="newsletter-section">
+  <div class="newsletter-container">
+    <div class="newsletter-content">
+      <p class="newsletter-eyebrow">STAY UPDATED</p>
+      <h2>Subscribe to our Newsletter</h2>
+      <p class="newsletter-description">
+        Get the latest product updates, new arrivals and exclusive offers delivered straight to your
+        inbox.
+      </p>
+      <div class="newsletter-form">
+        <div class="newsletter-input-wrapper">
+          <svg class="newsletter-mail-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+            <path d="m3 7 9 6 9-6"></path>
+          </svg>
+          <input
+            type="email"
+            placeholder="Enter your email address"
+            aria-label="Email address"
+            autocomplete="email"
+          />
+        </div>
+        <button
+          type="button"
+          class="newsletter-button"
+          disabled
+          title="Newsletter subscription will be available soon"
+        >
+          Subscribe
+          <span>→</span>
+        </button>
+      </div>
+      <p class="newsletter-note">Newsletter subscriptions will be available soon.</p>
+    </div>
+
+    <!-- Newsletter illustration -->
+    <div class="newsletter-visual">
+      <div class="newsletter-circle newsletter-circle-one"></div>
+      <div class="newsletter-circle newsletter-circle-two"></div>
+      <div class="newsletter-paper">
+        <div class="newsletter-paper-header">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div class="newsletter-paper-line large"></div>
+        <div class="newsletter-paper-line"></div>
+        <div class="newsletter-paper-line short"></div>
+        <div class="newsletter-paper-card">
+          <div class="newsletter-paper-icon">🛒</div>
+          <div>
+            <div class="newsletter-paper-line small"></div>
+            <div class="newsletter-paper-line tiny"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="newsletter-envelope">
+        <div class="envelope-flap"></div>
+        <div class="envelope-body"></div>
+      </div>
+
+      <div class="newsletter-bell">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+          <path d="M10 21h4"></path>
+        </svg>
+      </div>
+
+      <div class="newsletter-plane">➤</div>
+    </div>
+  </div>
+</section>
+<!-- =========================
+    STEP 8 — FOOTER
+    ========================= -->
+<footer class="site-footer">
+  <div class="footer-container">
+    <!-- Brand -->
+    <div class="footer-brand">
+      <a routerLink="/" class="footer-logo" aria-label="ShopSphere home">
+        <span class="footer-logo-mark">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 8h16l-1 11H5L4 8z"></path>
+            <path d="M8 8a4 4 0 0 1 8 0"></path>
+            <circle cx="8" cy="21" r="1"></circle>
+            <circle cx="17" cy="21" r="1"></circle>
+          </svg>
+        </span>
+        <span class="footer-logo-text"> Shop<span>Sphere</span> </span>
+      </a>
+
+      <p class="footer-description">
+        Your smarter destination for discovering products across categories you love.
+      </p>
+
+      <a routerLink="/products" class="footer-shop-link">
+        Start Shopping
+        <span>→</span>
+      </a>
+    </div>
+
+    <!-- Shop -->
+    <div class="footer-column">
+      <h3>Shop</h3>
+      <a routerLink="/products"> All Products </a>
+      @for (category of categories().slice(0, 5); track category.id) {
+        <a
+          [routerLink]="['/products']"
+          [queryParams]="{
+            category: category.name,
+          }"
+        >
+          {{ category.name }}
+        </a>
+      }
+    </div>
+
+    <!-- Account -->
+    <div class="footer-column">
+      <h3>Account</h3>
+      @if (isAuthenticated()) {
+        <a routerLink="/cart"> My Cart </a>
+        <a routerLink="/products"> Continue Shopping </a>
+      } @else {
+        <a routerLink="/login"> Login </a>
+        <a routerLink="/register"> Create Account </a>
+      }
+    </div>
+
+    <!-- Quick Links -->
+    <div class="footer-column">
+      <h3>Quick Links</h3>
+      <a routerLink="/"> Home </a>
+      <a routerLink="/products"> Products </a>
+      <a routerLink="/cart"> Cart </a>
+      <a href="#categories"> Categories </a>
+    </div>
+  </div>
+
+  <!-- Bottom -->
+  <div class="footer-bottom">
+    <div class="footer-bottom-inner">
+      <p>© {{ currentYear }} ShopSphere. All rights reserved.</p>
+
+      <div class="footer-bottom-links">
+        <a routerLink="/"> ShopSphere </a>
+        <span aria-hidden="true">•</span>
+        <a routerLink="/products"> Shop smarter </a>
+      </div>
+    </div>
+  </div>
+</footer>

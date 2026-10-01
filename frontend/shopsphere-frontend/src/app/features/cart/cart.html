@@ -45,6 +45,10 @@
         >
           {{ clearing() ? 'Clearing…' : 'Clear Cart' }}
         </button>
+
+        <button type="button" class="checkout-button" (click)="goToCheckout()">
+          Proceed to Checkout
+        </button>
       </div>
     }
   }

@@ -1,7 +1,7 @@
 import { Component, OnInit, WritableSignal, inject, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DecimalPipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { CartService } from '../../core/services/cart.service';
 import { resolveErrorMessage } from '../../core/utils/http-error.util';
@@ -25,6 +25,7 @@ const INSUFFICIENT_STOCK_MESSAGE = 'Not enough stock available for the requested
 })
 export class Cart implements OnInit {
   private readonly cartService = inject(CartService);
+  private readonly router = inject(Router);
 
   readonly cart = this.cartService.cart;
 
@@ -44,6 +45,10 @@ export class Cart implements OnInit {
 
   retry(): void {
     this.loadCart();
+  }
+
+  goToCheckout(): void {
+    this.router.navigate(['/checkout']);
   }
 
   isUpdating(cartItemId: number): boolean {

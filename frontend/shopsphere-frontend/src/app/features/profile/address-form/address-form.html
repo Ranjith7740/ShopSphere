@@ -1,0 +1,169 @@
+<form class="address-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <h2>{{ isEditMode ? 'Edit Address' : 'Add Address' }}</h2>
+
+  <div class="form-row">
+    <label for="fullName">Full Name</label>
+    <input id="fullName" type="text" formControlName="fullName" autocomplete="name" />
+    @if (form.controls.fullName.touched && form.controls.fullName.invalid) {
+      <p class="field-error" role="alert">
+        @if (form.controls.fullName.hasError('required')) {
+          Full name is required.
+        } @else if (form.controls.fullName.hasError('maxlength')) {
+          Full name must not exceed 100 characters.
+        } @else if (form.controls.fullName.hasError('server')) {
+          {{ form.controls.fullName.getError('server') }}
+        }
+      </p>
+    }
+  </div>
+
+  <div class="form-row">
+    <label for="phone">Phone</label>
+    <input
+      id="phone"
+      type="tel"
+      formControlName="phone"
+      autocomplete="tel"
+      inputmode="numeric"
+      aria-label="Phone (10 digits)"
+    />
+    @if (form.controls.phone.touched && form.controls.phone.invalid) {
+      <p class="field-error" role="alert">
+        @if (form.controls.phone.hasError('required')) {
+          Phone is required.
+        } @else if (form.controls.phone.hasError('pattern')) {
+          Phone must be exactly 10 digits.
+        } @else if (form.controls.phone.hasError('server')) {
+          {{ form.controls.phone.getError('server') }}
+        }
+      </p>
+    }
+  </div>
+
+  <div class="form-row">
+    <label for="addressLine1">Address Line 1</label>
+    <input id="addressLine1" type="text" formControlName="addressLine1" autocomplete="address-line1" />
+    @if (form.controls.addressLine1.touched && form.controls.addressLine1.invalid) {
+      <p class="field-error" role="alert">
+        @if (form.controls.addressLine1.hasError('required')) {
+          Address line 1 is required.
+        } @else if (form.controls.addressLine1.hasError('maxlength')) {
+          Address line 1 must not exceed 255 characters.
+        } @else if (form.controls.addressLine1.hasError('server')) {
+          {{ form.controls.addressLine1.getError('server') }}
+        }
+      </p>
+    }
+  </div>
+
+  <div class="form-row">
+    <label for="addressLine2">Address Line 2 (optional)</label>
+    <input id="addressLine2" type="text" formControlName="addressLine2" autocomplete="address-line2" />
+    @if (form.controls.addressLine2.touched && form.controls.addressLine2.invalid) {
+      <p class="field-error" role="alert">
+        @if (form.controls.addressLine2.hasError('maxlength')) {
+          Address line 2 must not exceed 255 characters.
+        } @else if (form.controls.addressLine2.hasError('server')) {
+          {{ form.controls.addressLine2.getError('server') }}
+        }
+      </p>
+    }
+  </div>
+
+  <div class="form-row">
+    <label for="city">City</label>
+    <input id="city" type="text" formControlName="city" autocomplete="address-level2" />
+    @if (form.controls.city.touched && form.controls.city.invalid) {
+      <p class="field-error" role="alert">
+        @if (form.controls.city.hasError('required')) {
+          City is required.
+        } @else if (form.controls.city.hasError('maxlength')) {
+          City must not exceed 100 characters.
+        } @else if (form.controls.city.hasError('server')) {
+          {{ form.controls.city.getError('server') }}
+        }
+      </p>
+    }
+  </div>
+
+  <div class="form-row">
+    <label for="state">State</label>
+    <input id="state" type="text" formControlName="state" autocomplete="address-level1" />
+    @if (form.controls.state.touched && form.controls.state.invalid) {
+      <p class="field-error" role="alert">
+        @if (form.controls.state.hasError('required')) {
+          State is required.
+        } @else if (form.controls.state.hasError('maxlength')) {
+          State must not exceed 100 characters.
+        } @else if (form.controls.state.hasError('server')) {
+          {{ form.controls.state.getError('server') }}
+        }
+      </p>
+    }
+  </div>
+
+  <div class="form-row">
+    <label for="postalCode">Postal Code</label>
+    <input
+      id="postalCode"
+      type="text"
+      formControlName="postalCode"
+      autocomplete="postal-code"
+      inputmode="numeric"
+    />
+    @if (form.controls.postalCode.touched && form.controls.postalCode.invalid) {
+      <p class="field-error" role="alert">
+        @if (form.controls.postalCode.hasError('required')) {
+          Postal code is required.
+        } @else if (form.controls.postalCode.hasError('pattern')) {
+          Postal code must be 4 to 10 digits.
+        } @else if (form.controls.postalCode.hasError('server')) {
+          {{ form.controls.postalCode.getError('server') }}
+        }
+      </p>
+    }
+  </div>
+
+  <div class="form-row">
+    <label for="country">Country</label>
+    <input id="country" type="text" formControlName="country" autocomplete="country-name" />
+    @if (form.controls.country.touched && form.controls.country.invalid) {
+      <p class="field-error" role="alert">
+        @if (form.controls.country.hasError('required')) {
+          Country is required.
+        } @else if (form.controls.country.hasError('maxlength')) {
+          Country must not exceed 100 characters.
+        } @else if (form.controls.country.hasError('server')) {
+          {{ form.controls.country.getError('server') }}
+        }
+      </p>
+    }
+  </div>
+
+  <div class="form-row">
+    <label for="type">Address Type</label>
+    <select id="type" formControlName="type">
+      <option value="HOME">Home</option>
+      <option value="WORK">Work</option>
+      <option value="OTHER">Other</option>
+    </select>
+  </div>
+
+  <div class="form-row checkbox-row">
+    <label>
+      <input type="checkbox" formControlName="isDefault" />
+      Set as default address
+    </label>
+  </div>
+
+  @if (errorMessage()) {
+    <p class="form-error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  <div class="form-actions">
+    <button type="button" (click)="cancel()" [disabled]="saving()">Cancel</button>
+    <button type="submit" [disabled]="saving()">
+      {{ saving() ? 'Saving…' : isEditMode ? 'Save Changes' : 'Add Address' }}
+    </button>
+  </div>
+</form>
