@@ -1,0 +1,55 @@
+<div class="orders-container">
+  <h1 class="page-title">My Orders</h1>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading your orders...</p>
+    </div>
+  } @else if (error()) {
+    <div class="error-state">
+      <p>{{ error() }}</p>
+      <button class="btn-retry" (click)="loadOrders()">Retry</button>
+    </div>
+  } @else if (!orders()?.content?.length) {
+    <div class="empty-state">
+      <div class="empty-icon">📦</div>
+      <p>You haven't placed any orders yet.</p>
+      <a routerLink="/products" class="btn-shop">Start Shopping</a>
+    </div>
+  } @else {
+    <div class="orders-list">
+      @for (order of orders()?.content; track order.id) {
+        <div class="order-card">
+          <div class="order-header">
+            <div class="order-main">
+              <span class="order-id">Order #{{ order.id }}</span>
+              <span class="order-date">{{ order.createdAt | date:'mediumDate' }}</span>
+            </div>
+            <div class="order-meta">
+              <span class="order-total">{{ order.totalAmount | currency }}</span>
+              <span class="status-badge" [attr.data-status]="order.orderStatus">
+                {{ order.orderStatus }}
+              </span>
+            </div>
+          </div>
+          <div class="order-actions">
+            <a [routerLink]="['/orders', order.id]" class="btn-details">View Details</a>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="pagination-controls" *ngIf="orders()">
+      <button [disabled]="orders()?.number === 0" (click)="changePage(orders()!.number - 1)">
+        Previous
+      </button>
+      <span class="page-info">
+        Page {{ (orders()?.number ?? 0) + 1 }} of {{ orders()?.totalPages }}
+      </span>
+      <button [disabled]="(orders()?.number ?? 0) + 1 >= (orders()?.totalPages ?? 0)" (click)="changePage((orders()?.number ?? 0) + 1)">
+        Next
+      </button>
+    </div>
+  }
+</div>

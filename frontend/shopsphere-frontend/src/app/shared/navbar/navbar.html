@@ -70,6 +70,10 @@
                   <i class="bi bi-person-circle"></i>
                   <span>Profile</span>
                 </a>
+                <a routerLink="/orders" class="dropdown-link" (click)="closeMenus()">
+                  <i class="bi bi-list-check"></i>
+                  <span>My Orders</span>
+                </a>
                 <!-- Future Orders / Settings can be added here -->
                 <button type="button" class="dropdown-logout" (click)="logout()">
                   <i class="bi bi-box-arrow-right"></i>
@@ -152,6 +156,11 @@
           <a routerLink="/profile" (click)="closeMenus()">
             <i class="bi bi-person-circle"></i>
             <span>Profile</span>
+          </a>
+
+          <a routerLink="/orders" (click)="closeMenus()">
+            <i class="bi bi-list-check"></i>
+            <span>My Orders</span>
           </a>
 
           <button type="button" class="mobile-logout" (click)="logout()">

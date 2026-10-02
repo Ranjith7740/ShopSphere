@@ -46,6 +46,21 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./features/checkout/checkout').then((m) => m.Checkout),
   },
+  {
+    path: 'orders',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/orders/my-orders/my-orders').then((m) => m.MyOrders),
+  },
+  {
+    path: 'orders/:id',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/orders/order-detail/order-detail').then((m) => m.OrderDetail),
+  },
+  {
+    path: 'order-success/:id',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/orders/order-success/order-success').then((m) => m.OrderSuccess),
+  },
   // Temporary routes for manually verifying authGuard/roleGuard (Step 14A Part 7).
   {
     path: 'protected-test',

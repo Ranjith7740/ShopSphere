@@ -1,0 +1,85 @@
+<div class="detail-container">
+  @if (loading()) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Loading order details...</p>
+    </div>
+  } @else if (error()) {
+    <div class="error">
+      <p>{{ error() }}</p>
+      <button class="btn-retry" (click)="loadOrder(order()?.id || 0)">Retry</button>
+    </div>
+  } @else if (order()) {
+    <div class="order-card">
+      <header class="order-header">
+        <div class="header-left">
+          <h1 class="order-title">Order #{{ order()?.id }}</h1>
+          <p class="order-date">Placed on {{ order()?.createdAt | date:'medium' }}</p>
+        </div>
+        <div class="status-area">
+          <span class="status-badge" [attr.data-status]="order()?.orderStatus">
+            {{ order()?.orderStatus }}
+          </span>
+          <span class="payment-badge">Payment: {{ order()?.paymentStatus }}</span>
+        </div>
+      </header>
+
+      <app-order-timeline [status]="order()?.orderStatus!"></app-order-timeline>
+
+      <div class="detail-grid">
+        <section class="items-section">
+          <h2>Items</h2>
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of order()?.items; track item.productId) {
+                <tr>
+                  <td class="product-name">{{ item.productName }}</td>
+                  <td class="text-center">{{ item.quantity }}</td>
+                  <td class="text-right">{{ item.unitPrice | currency }}</td>
+                  <td class="text-right">{{ item.subtotal | currency }}</td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="3" class="text-right"><strong>Total Amount:</strong></td>
+                <td class="text-right"><strong>{{ order()?.totalAmount | currency }}</strong></td>
+              </tr>
+            </tfoot>
+          </table>
+        </section>
+
+        <section class="address-section">
+          <h2>Shipping Address</h2>
+          <div class="address-card">
+            <p class="address-name"><strong>{{ order()?.shippingAddress?.fullName }}</strong></p>
+            <p>{{ order()?.shippingAddress?.addressLine1 }}</p>
+            @if (order()?.shippingAddress?.addressLine2) {
+              <p>{{ order()?.shippingAddress?.addressLine2 }}</p>
+            }
+            <p>{{ order()?.shippingAddress?.city }}, {{ order()?.shippingAddress?.state }}</p>
+            <p>{{ order()?.shippingAddress?.postalCode }}</p>
+            <p>{{ order()?.shippingAddress?.country }}</p>
+          </div>
+        </section>
+      </div>
+
+      <footer class="order-footer">
+        @if (canCancel()) {
+          <button class="btn-cancel" (click)="cancelOrder()" [disabled]="isCancelling()">
+            {{ isCancelling() ? 'Cancelling...' : 'Cancel Order' }}
+          </button>
+        }
+        <a routerLink="/orders" class="btn-back">Back to My Orders</a>
+      </footer>
+    </div>
+  }
+</div>

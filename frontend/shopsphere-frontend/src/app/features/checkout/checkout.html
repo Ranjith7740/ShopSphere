@@ -1,149 +1,110 @@
-<section class="checkout-page">
-  <h1>Checkout</h1>
-
-  @if (loadingCart()) {
-    <p class="status" role="status">Loading cart...</p>
-  } @else if (cartError()) {
-    <div class="status status-error" role="alert">
-      <p>{{ cartError() }}</p>
-      <button type="button" (click)="retryCart()">Retry</button>
-    </div>
-  } @else if (cart(); as loadedCart) {
-    @if (loadedCart.items.length === 0) {
-      <div class="empty-cart status">
-        <p>Your cart is empty.</p>
-        <a routerLink="/products">Continue Shopping</a>
+<div class="checkout-container">
+  <!-- Address Form Panel -->
+  @if (showAddressForm()) {
+    <div class="address-panel">
+      <div class="panel-content">
+        <h3>{{ editingAddress() ? 'Edit Address' : 'Add New Address' }}</h3>
+        <app-address-form
+          [address]="editingAddress()"
+          (saved)="onAddressSaved($event)"
+          (cancelled)="closeAddressForm()">
+        </app-address-form>
       </div>
-    } @else {
-      @if (cartHasUnavailableItems()) {
-        <div class="status status-error blocking-banner" role="alert">
-          <p>Some items in your cart are unavailable. Please update your cart before continuing.</p>
-          <a routerLink="/cart">Return to Cart</a>
+      <div class="panel-overlay" (click)="closeAddressForm()"></div>
+    </div>
+  }
+
+  @if (loadingCart() || cartError() || !cart() || cart()?.items?.length === 0) {
+    <div class="empty-cart-state">
+      @if (loadingCart()) {
+        <div class="loading">Loading cart...</div>
+      } @else if (cartError()) {
+        <div class="error">{{ cartError() }} <button (click)="retryCart()">Retry</button></div>
+      } @else {
+        <div class="empty-msg">Your cart is empty.</div>
+        <a routerLink="/products" class="btn-shop">Start Shopping</a>
+      }
+    </div>
+  } @else {
+    <!-- Cart Summary -->
+    <section class="cart-summary">
+      <h2 class="section-title">Your Order</h2>
+      <a routerLink="/cart" class="edit-cart-link">Edit Cart</a>
+      <div class="items-list">
+        @for (item of cart()?.items; track item.productId) {
+          <div class="item">
+            <div class="item-info">
+              <span class="name">{{ item.productName }}</span>
+              <span class="qty">Qty: {{ item.quantity }}</span>
+            </div>
+            <span class="price">{{ item.unitPrice | currency }}</span>
+            @if (itemUnavailableReason(item); as reason) {
+              <div class="unavailable-tag">{{ reason }}</div>
+            }
+          </div>
+        }
+        <div class="total summary-total">
+          <strong>Total: {{ cart()?.cartTotal | currency }}</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- Address Selection -->
+    <section class="address-selection">
+      <h2 class="section-title">Shipping Address</h2>
+      @if (loadingAddresses()) {
+        <div class="loading">Loading addresses...</div>
+      } @else if (addressError()) {
+        <div class="error">
+          {{ addressError() }}
+          <button (click)="retryAddresses()">Retry</button>
+        </div>
+      } @else {
+        <div class="address-list">
+          @for (address of addresses(); track address.id) {
+            <div class="address-card"
+                 [class.selected]="selectedAddressId() === address.id"
+                 (click)="selectAddress(address.id)">
+              <div class="address-details">
+                <strong>{{ address.fullName }}</strong>
+                <p>{{ address.addressLine1 }}, {{ address.city }}, {{ address.state }}</p>
+              </div>
+              @if (address.isDefault) {
+                <span class="default-badge">Default</span>
+              }
+            </div>
+          }
+        </div>
+        <div class="address-actions">
+          <button (click)="openAddForm()">Add New Address</button>
         </div>
       }
+    </section>
+  }
 
-      <div class="checkout-layout">
-        <div class="checkout-main">
-          <section class="address-section">
-            <h2>Delivery Address</h2>
-
-            @if (loadingAddresses()) {
-              <p class="status" role="status">Loading addresses...</p>
-            } @else if (addressError()) {
-              <div class="status status-error" role="alert">
-                <p>{{ addressError() }}</p>
-                <button type="button" (click)="retryAddresses()">Retry</button>
-              </div>
-            } @else {
-              @if (addressFeedback()) {
-                <p class="status status-success" role="status">{{ addressFeedback() }}</p>
-              }
-
-              @if (showAddressForm()) {
-                <app-address-form
-                  [address]="editingAddress()"
-                  (saved)="onAddressSaved($event)"
-                  (cancelled)="closeAddressForm()"
-                />
-              } @else {
-                @if (addresses().length === 0) {
-                  <p class="status">No saved addresses yet. Add one to continue.</p>
-                } @else {
-                  <div class="address-options" role="radiogroup" aria-label="Delivery address">
-                    @for (address of addresses(); track address.id) {
-                      <label class="address-option" [class.selected]="selectedAddressId() === address.id">
-                        <input
-                          type="radio"
-                          name="deliveryAddress"
-                          [value]="address.id"
-                          [checked]="selectedAddressId() === address.id"
-                          (change)="selectAddress(address.id)"
-                        />
-                        <span class="address-option-body">
-                          <span class="address-option-header">
-                            <span class="address-type">{{ address.type }}</span>
-                            @if (address.isDefault) {
-                              <span class="default-badge">Default</span>
-                            }
-                            @if (selectedAddressId() === address.id) {
-                              <span class="selected-badge">Selected</span>
-                            }
-                          </span>
-                          <span class="address-name">{{ address.fullName }}</span>
-                          <span>{{ address.phone }}</span>
-                          <span>{{ address.addressLine1 }}</span>
-                          @if (address.addressLine2) {
-                            <span>{{ address.addressLine2 }}</span>
-                          }
-                          <span>{{ address.city }}, {{ address.state }} {{ address.postalCode }}</span>
-                          <span>{{ address.country }}</span>
-                          <button
-                            type="button"
-                            class="edit-address-button"
-                            (click)="openEditForm(address)"
-                          >
-                            Edit
-                          </button>
-                        </span>
-                      </label>
-                    }
-                  </div>
-
-                  @if (selectedAddressId() === null) {
-                    <p class="status-error" role="alert">Please select a delivery address.</p>
-                  }
-                }
-
-                <button type="button" class="add-address-button" (click)="openAddForm()">
-                  Add New Address
-                </button>
-              }
-            }
-          </section>
-        </div>
-
-        <aside class="checkout-summary">
-          <h2>Order Summary</h2>
-
-          <div class="summary-items">
-            @for (item of loadedCart.items; track item.id) {
-              <div class="summary-item">
-                <div class="summary-item-main">
-                  <span class="summary-item-name">{{ item.productName }} &times; {{ item.quantity }}</span>
-                  <span class="summary-item-subtotal">{{ item.subtotal | number: '1.2-2' }}</span>
-                </div>
-                @if (itemUnavailableReason(item); as reason) {
-                  <p class="availability-message" role="alert">{{ reason }}</p>
-                }
-              </div>
-            }
-          </div>
-
-          <a routerLink="/cart" class="edit-cart-link">Edit Cart</a>
-
-          <div class="summary-total">
-            <span>Total</span>
-            <span>{{ loadedCart.cartTotal | number: '1.2-2' }}</span>
-          </div>
-
-          <button
-            type="button"
-            class="continue-button"
-            [disabled]="!isCheckoutReady()"
-            (click)="continueToPayment()"
-          >
-            Continue to Payment
-          </button>
-
-          @if (continueClicked()) {
-            <p class="status" role="status">
-              Checkout review complete. Order placement isn't available yet.
-            </p>
-          } @else if (checkoutBlockedReason(); as reason) {
-            <p class="status status-error" role="alert">{{ reason }}</p>
-          }
-        </aside>
+  <!-- Checkout Footer -->
+  <footer class="checkout-footer">
+    @if (placeOrderError()) {
+      <div class="error-message">{{ placeOrderError() }}</div>
+    }
+    @if (addressFeedback()) {
+      <div class="feedback-message">{{ addressFeedback() }}</div>
+    }
+    <button
+      class="place-order-btn"
+      [disabled]="!isCheckoutReady() || isPlacingOrder()"
+      (click)="placeOrder()">
+      @if (isPlacingOrder()) {
+        <span>Placing Order...</span>
+      } @else {
+        <span>Place Order</span>
+      }
+    </button>
+    @if (checkoutBlockedReason(); as reason) {
+      <div class="blocking-banner">
+        {{ reason }}
+        <a routerLink="/cart" class="edit-cart-link">Edit Cart</a>
       </div>
     }
-  }
-</section>
+  </footer>
+</div>
