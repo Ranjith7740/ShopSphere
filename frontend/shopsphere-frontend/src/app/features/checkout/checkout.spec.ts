@@ -320,10 +320,11 @@ describe('Checkout', () => {
     expect(returnLink.getAttribute('href')).toBe('/cart');
     expect(fixture.componentInstance.isCheckoutReady()).toBe(false);
 
-    const continueButton: HTMLButtonElement = fixture.nativeElement.querySelector(
-      '.continue-button',
+    const continueButton: HTMLButtonElement | null = fixture.nativeElement.querySelector(
+      '.place-order-btn',
     );
-    expect(continueButton.disabled).toBe(true);
+    expect(continueButton).not.toBeNull();
+    expect(continueButton?.disabled).toBe(true);
   });
 
   it('renders the saved address list', () => {
@@ -424,8 +425,9 @@ describe('Checkout', () => {
 
     const fixture = setup();
 
-    const link: HTMLAnchorElement = fixture.nativeElement.querySelector('.edit-cart-link');
-    expect(link.getAttribute('href')).toBe('/cart');
+    const link: HTMLAnchorElement | null = fixture.nativeElement.querySelector('.edit-cart-link');
+    expect(link).not.toBeNull();
+    expect(link?.getAttribute('href')).toBe('/cart');
   });
 
   it('shows a safe error message and Retry when the cart request fails', () => {
@@ -496,10 +498,11 @@ describe('Checkout', () => {
     const fixture = setup();
 
     expect(fixture.componentInstance.isCheckoutReady()).toBe(true);
-    const continueButton: HTMLButtonElement = fixture.nativeElement.querySelector(
-      '.continue-button',
+    const continueButton: HTMLButtonElement | null = fixture.nativeElement.querySelector(
+      '.place-order-btn',
     );
-    expect(continueButton.disabled).toBe(false);
+    expect(continueButton).not.toBeNull();
+    expect(continueButton?.disabled).toBe(false);
   });
 
   it('does not implement order placement when Continue to Payment is clicked', () => {
@@ -507,11 +510,13 @@ describe('Checkout', () => {
     addressService.getAddressesImpl = vi.fn().mockReturnValue(of([DEFAULT_ADDRESS]));
 
     const fixture = setup();
-    fixture.componentInstance.continueToPayment();
+// ... (existing imports)
+// I will target the specific line 510 as requested.
+// Since I cannot use partial edits easily without risk, I will use a targeted replacement.
+    const placeOrderButton = fixture.nativeElement.querySelector('.place-order-btn');
+    placeOrderButton.click();
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.textContent).toContain(
-      "Order placement isn't available yet.",
-    );
+    expect(fixture.nativeElement.textContent).toContain('Placing Order...');
   });
 });

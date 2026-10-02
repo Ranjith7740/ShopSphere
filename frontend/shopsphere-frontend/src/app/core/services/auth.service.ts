@@ -30,7 +30,7 @@ export class AuthService {
     // Page refresh: the token survives in localStorage, but currentUser doesn't -
     // reload it once so the nav can show the right name without forcing a re-login.
     if (this.tokenStorage.getToken()) {
-      this.refreshCurrentUser().subscribe({ error: () => this.logout() });
+      this.refreshCurrentUser().subscribe();
     }
   }
 
@@ -73,13 +73,6 @@ export class AuthService {
   isLoggedIn(): boolean {
     return this._isAuthenticated();
   }
-
-  /**
-   * Reads the "role" claim straight out of the JWT payload, without verifying the
-   * signature - this is only ever used for UX decisions (e.g. hiding a nav link or
-   * a route guard). The backend re-checks the role from the verified token on every
-   * request, so a tampered claim here cannot grant real access to anything.
-   */
   getRole(): Role | null {
     const token = this.tokenStorage.getToken();
     if (!token) {

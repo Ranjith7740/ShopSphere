@@ -1,0 +1,50 @@
+<div class="success-container">
+  <div class="success-card">
+    <div class="icon">🎉</div>
+    <h1 class="title">Order Confirmed!</h1>
+    <p class="message">Thank you for your purchase. Your order has been placed successfully.</p>
+
+    @if (order()) {
+      <div class="order-summary">
+        <div class="summary-row">
+          <span class="label">Order ID:</span>
+          <strong class="value">#{{ order()?.id }}</strong>
+        </div>
+        <div class="summary-row">
+          <span class="label">Total Amount:</span>
+          <strong class="value">{{ order()?.totalAmount | currency }}</strong>
+        </div>
+        <div class="summary-row">
+          <span class="label">Status:</span>
+          <span class="value status-badge" [attr.data-status]="order()?.orderStatus">
+            {{ order()?.orderStatus }}
+          </span>
+        </div>
+        <div class="summary-row">
+          <span class="label">Payment:</span>
+          <span class="value">{{ order()?.paymentStatus }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">Shipping to:</span>
+          <strong class="value">{{ order()?.shippingAddress?.fullName }}</strong>
+        </div>
+      </div>
+    } @else if (loading()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading order details...</p>
+      </div>
+    } @else if (error()) {
+      <div class="error-state">
+        <p>{{ error() }}</p>
+        <button class="btn-retry" (click)="loadOrder(order()?.id || 0)">Retry</button>
+      </div>
+    }
+
+    <div class="actions">
+      <a routerLink="/orders" class="btn btn-secondary">My Orders</a>
+      <a [routerLink]="['/orders', order()?.id]" class="btn btn-primary">View Order Details</a>
+      <a routerLink="/" class="btn btn-outline">Continue Shopping</a>
+    </div>
+  </div>
+</div>

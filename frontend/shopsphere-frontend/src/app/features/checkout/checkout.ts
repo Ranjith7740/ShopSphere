@@ -1,48 +1,43 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { HttpErrorResponse } from '@angular/common/http';
-import { DecimalPipe } from '@angular/common';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 import { CartService } from '../../core/services/cart.service';
 import { AddressService } from '../../core/services/address.service';
+import { OrderService } from '../../core/services/order.service';
 import { resolveErrorMessage } from '../../core/utils/http-error.util';
 import { CartItemResponse } from '../../core/models/cart.model';
 import { AddressResponse } from '../../core/models/address.model';
 import { AddressForm } from '../profile/address-form/address-form';
 
-/**
- * Orchestrates the Checkout page: cart review, address selection, and
- * checkout-readiness validation. Cart and addresses are read straight from
- * CartService/AddressService rather than copied locally - this component
- * only owns UI state (loading/error flags, which address is selected, the
- * add/edit address panel) layered on top of that shared state.
- */
 @Component({
   selector: 'app-checkout',
-  imports: [AddressForm, RouterLink, DecimalPipe],
+  standalone: true,
+  imports: [AddressForm, RouterLink, DecimalPipe, CurrencyPipe],
   templateUrl: './checkout.html',
   styleUrl: './checkout.css',
 })
 export class Checkout implements OnInit {
   private readonly cartService = inject(CartService);
   private readonly addressService = inject(AddressService);
+  private readonly orderService = inject(OrderService);
+  private readonly router = inject(Router);
 
   readonly cart = this.cartService.cart;
   readonly addresses = this.addressService.addresses;
 
   readonly loadingCart = signal(false);
   readonly cartError = signal<string | null>(null);
-
   readonly loadingAddresses = signal(false);
   readonly addressError = signal<string | null>(null);
-
   readonly selectedAddressId = signal<number | null>(null);
-
   readonly showAddressForm = signal(false);
   readonly editingAddress = signal<AddressResponse | null>(null);
   readonly addressFeedback = signal<string | null>(null);
 
-  readonly continueClicked = signal(false);
+  readonly isPlacingOrder = signal(false);
+  readonly placeOrderError = signal<string | null>(null);
 
   readonly cartHasUnavailableItems = computed(() =>
     (this.cart()?.items ?? []).some((item) => this.isItemUnavailable(item)),
@@ -50,24 +45,16 @@ export class Checkout implements OnInit {
 
   readonly isCheckoutReady = computed(() => {
     const cart = this.cart();
-    if (!cart || cart.items.length === 0) {
-      return false;
-    }
-    if (this.cartHasUnavailableItems()) {
-      return false;
-    }
+    if (!cart || cart.items.length === 0) return false;
+    if (this.cartHasUnavailableItems()) return false;
     const selectedId = this.selectedAddressId();
-    if (selectedId === null) {
-      return false;
-    }
+    if (selectedId === null) return false;
     return this.addresses().some((address) => address.id === selectedId);
   });
 
   readonly checkoutBlockedReason = computed(() => {
     const cart = this.cart();
-    if (!cart || cart.items.length === 0) {
-      return null;
-    }
+    if (!cart || cart.items.length === 0) return null;
     if (this.cartHasUnavailableItems()) {
       return 'Some items in your cart are unavailable. Please update your cart before continuing.';
     }
@@ -115,7 +102,6 @@ export class Checkout implements OnInit {
   onAddressSaved(saved: AddressResponse): void {
     const wasNewAddress = this.editingAddress() === null;
     this.closeAddressForm();
-
     if (wasNewAddress) {
       this.selectedAddressId.set(saved.id);
       this.addressFeedback.set('Address added successfully.');
@@ -124,20 +110,27 @@ export class Checkout implements OnInit {
     }
   }
 
-  continueToPayment(): void {
-    if (!this.isCheckoutReady()) {
-      return;
-    }
-    this.continueClicked.set(true);
+  placeOrder(): void {
+    if (!this.isCheckoutReady()) return;
+
+    this.isPlacingOrder.set(true);
+    this.placeOrderError.set(null);
+
+    this.orderService.placeOrder({ addressId: this.selectedAddressId()! }).subscribe({
+      next: (order) => {
+        this.isPlacingOrder.set(false);
+        this.router.navigate(['/order-success', order.id]);
+      },
+      error: (err) => {
+        this.isPlacingOrder.set(false);
+        this.placeOrderError.set(resolveErrorMessage(err));
+      },
+    });
   }
 
   itemUnavailableReason(item: CartItemResponse): string | null {
-    if (!item.productActive) {
-      return 'Product no longer available';
-    }
-    if (item.availableStock === 0) {
-      return 'Out of stock';
-    }
+    if (!item.productActive) return 'Product no longer available';
+    if (item.availableStock === 0) return 'Out of stock';
     if (item.quantity > item.availableStock) {
       return `Only ${item.availableStock} left. Reduce quantity.`;
     }
@@ -149,16 +142,12 @@ export class Checkout implements OnInit {
   }
 
   private ensureCartLoaded(force = false): void {
-    if (!force && this.cartService.cart() !== null) {
-      return;
-    }
-
+    if (!force && this.cartService.cart() !== null) return;
     this.loadingCart.set(true);
     this.cartError.set(null);
-
     this.cartService.getCart().subscribe({
       next: () => this.loadingCart.set(false),
-      error: (err: HttpErrorResponse) => {
+      error: (err) => {
         this.loadingCart.set(false);
         this.cartError.set(resolveErrorMessage(err));
       },
@@ -170,16 +159,14 @@ export class Checkout implements OnInit {
       this.preselectDefaultAddress();
       return;
     }
-
     this.loadingAddresses.set(true);
     this.addressError.set(null);
-
     this.addressService.getAddresses().subscribe({
       next: () => {
         this.loadingAddresses.set(false);
         this.preselectDefaultAddress();
       },
-      error: (err: HttpErrorResponse) => {
+      error: (err) => {
         this.loadingAddresses.set(false);
         this.addressError.set(resolveErrorMessage(err));
       },
@@ -187,9 +174,7 @@ export class Checkout implements OnInit {
   }
 
   private preselectDefaultAddress(): void {
-    if (this.selectedAddressId() !== null) {
-      return;
-    }
+    if (this.selectedAddressId() !== null) return;
     const defaultAddress = this.addressService.addresses().find((address) => address.isDefault);
     if (defaultAddress) {
       this.selectedAddressId.set(defaultAddress.id);
