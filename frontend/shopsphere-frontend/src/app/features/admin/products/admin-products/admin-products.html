@@ -1,0 +1,85 @@
+<div class="container">
+  <div class="header">
+    <h1>Products</h1>
+    <a routerLink="/admin/products/new" class="btn-primary">+ Add Product</a>
+  </div>
+
+  <div class="filters">
+    <div class="search-box">
+      <input [formControl]="searchControl" type="text" placeholder="Search products...">
+    </div>
+
+    <div class="filter-group">
+      <select (change)="onCategoryChange($any($event).target.value)">
+        <option value="">All Categories</option>
+        <option *ngFor="let cat of categories()" [value]="cat.id">{{ cat.name }}</option>
+      </select>
+
+      <select (change)="onSortChange($any($event).target.value)">
+        <option value="createdAt,desc">Newest First</option>
+        <option value="price,asc">Price: Low to High</option>
+        <option value="price,desc">Price: High to Low</option>
+        <option value="name,asc">Name: A-Z</option>
+      </select>
+
+      <button (click)="clearFilters()" class="btn-secondary">Clear Filters</button>
+    </div>
+  </div>
+
+  <div *ngIf="loading()" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading products...</p>
+  </div>
+
+  <div *ngIf="!loading() && errorMessage()" class="error-state">
+    <p>{{ errorMessage() }}</p>
+    <button (click)="loadProducts()" class="btn-secondary">Retry</button>
+  </div>
+
+  <div *ngIf="!loading() && !errorMessage()" class="table-container">
+    <table *ngIf="products().length > 0; else emptyState">
+      <thead>
+        <tr>
+          <th>Product Name</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of products()">
+          <td>{{ product.name }}</td>
+          <td>{{ product.categoryName }}</td>
+          <td>{{ product.price | currency }}</td>
+          <td>{{ product.stockQuantity }}</td>
+          <td>
+            <span class="status-badge" [class.active]="product.status === 'ACTIVE'" [class.inactive]="product.status === 'INACTIVE'">
+              {{ product.status }}
+            </span>
+          </td>
+          <td>
+            <div class="actions">
+              <a [routerLink]="['/admin/products', product.id, 'edit']" class="btn-action edit">Edit</a>
+              <button *ngIf="product.status === 'ACTIVE'" (click)="deactivateProduct(product.id)" class="btn-action deactivate">Deactivate</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <p>{{ searchControl.value || selectedCategoryId() ? 'No products match your current filters.' : 'No products found.' }}</p>
+        <button (click)="clearFilters()" class="btn-secondary">Clear Filters</button>
+      </div>
+    </ng-template>
+  </div>
+
+  <div *ngIf="!loading() && products().length > 0" class="pagination">
+    <button [disabled]="currentPage() === 0" (click)="goToPage(currentPage() - 1)">Previous</button>
+    <span>Page {{ currentPage() + 1 }} of {{ totalPages() }}</span>
+    <button [disabled]="currentPage() >= totalPages() - 1" (click)="goToPage(currentPage() + 1)">Next</button>
+  </div>
+</div>

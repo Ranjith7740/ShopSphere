@@ -1,0 +1,36 @@
+<div class="container">
+  <div class="header">
+    <h1>{{ isEditMode() ? 'Edit Category' : 'Add New Category' }}</h1>
+    <a routerLink="/admin/categories" class="btn-secondary">Back to Categories</a>
+  </div>
+
+  <div *ngIf="loading()" class="loading-overlay">
+    <p>Loading category...</p>
+  </div>
+
+  <div *ngIf="errorMessage()" class="error-message">
+    {{ errorMessage() }}
+  </div>
+
+  <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="category-form">
+    <div class="form-group">
+      <label for="name">Category Name *</label>
+      <input id="name" formControlName="name" type="text" placeholder="Enter category name">
+      <div *ngIf="productForm.get('name')?.touched && productForm.get('name')?.errors?.['required']" class="error">
+        Category name is required.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" formControlName="description" placeholder="Enter category description"></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="productForm.invalid || submitting()" class="btn-primary">
+        <span *ngIf="!submitting()">{{ isEditMode() ? 'Update Category' : 'Add Category' }}</span>
+        <span *ngIf="submitting()">{{ isEditMode() ? 'Updating...' : 'Adding...' }}</span>
+      </button>
+    </div>
+  </form>
+</div>

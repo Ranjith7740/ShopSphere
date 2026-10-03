@@ -98,14 +98,21 @@ export class Login {
           this.loginSuccess.set(true);
 
           setTimeout(() => {
-            const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+  const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
 
-            if (returnUrl && returnUrl.startsWith('/')) {
-              this.router.navigateByUrl(returnUrl);
-            } else {
-              this.router.navigateByUrl('/');
-            }
-          }, 900);
+  if (returnUrl && returnUrl.startsWith('/')) {
+    this.router.navigateByUrl(returnUrl);
+    return;
+  }
+
+  const role = this.authService.getRole();
+
+  if (role === 'ADMIN') {
+    this.router.navigateByUrl('/admin');
+  } else {
+    this.router.navigateByUrl('/');
+  }
+}, 900);
         },
 
         error: (err: HttpErrorResponse) => {

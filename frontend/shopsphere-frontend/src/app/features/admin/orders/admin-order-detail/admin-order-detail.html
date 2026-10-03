@@ -1,0 +1,117 @@
+<div class="container">
+  <div class="header">
+    <div class="title-group">
+      <button (click)="goBack()" class="btn-back">← Back to Orders</button>
+      <h1>Order Details</h1>
+    </div>
+  </div>
+
+  <div *ngIf="loading()" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading order details...</p>
+  </div>
+
+  <div *ngIf="!loading() && errorMessage()" class="error-state">
+    <p>{{ errorMessage() }}</p>
+    <button (click)="loadOrder(order()?.id?.toString()!)" class="btn-secondary">Retry</button>
+  </div>
+
+  <div *ngIf="!loading() && !errorMessage() && order()" class="detail-grid">
+
+    <!-- Order Summary -->
+    <div class="card summary-card">
+      <h3>Order Summary</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">Order ID:</span>
+          <span class="value">#{{ order()?.id }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Date:</span>
+          <span class="value">{{ order()?.createdAt | date:'medium' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Total Amount:</span>
+          <span class="value">{{ order()?.totalAmount | currency }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Payment Status:</span>
+          <span class="value">
+            <span class="status-badge" [class]="'payment-' + order()?.paymentStatus?.toLowerCase()">
+              {{ order()?.paymentStatus }}
+            </span>
+          </span>
+        </div>
+        <div class="info-item">
+          <span class="label">Current Status:</span>
+          <span class="value">
+            <span class="status-badge" [class]="'status-' + order()?.orderStatus?.toLowerCase()">
+              {{ order()?.orderStatus }}
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Customer & Shipping -->
+    <div class="card shipping-card">
+      <h3>Shipping Address (Snapshot)</h3>
+      <div class="address-details" *ngIf="order()?.shippingAddress">
+        <p><strong>{{ order()?.shippingAddress?.fullName }}</strong></p>
+        <p>{{ order()?.shippingAddress?.addressLine1 }}</p>
+        <p *ngIf="order()?.shippingAddress?.addressLine2">{{ order()?.shippingAddress?.addressLine2 }}</p>
+        <p>{{ order()?.shippingAddress?.city }}, {{ order()?.shippingAddress?.state }} {{ order()?.shippingAddress?.postalCode }}</p>
+        <p>{{ order()?.shippingAddress?.country }}</p>
+        <div class="contact-info">
+          <p>Phone: {{ order()?.shippingAddress?.phone }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Items -->
+    <div class="card items-card">
+      <h3>Items</h3>
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody *ngIf="order()?.items">
+          <tr *ngFor="let item of order()?.items">
+            <td>{{ item.productName }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.unitPrice | currency }}</td>
+            <td>{{ item.subtotal | currency }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Status Management -->
+    <div class="card status-card">
+      <h3>Manage Order Status</h3>
+      <p class="status-hint">Update the status to advance the order lifecycle.</p>
+
+      <div class="status-update-box">
+        <div class="input-group">
+          <label for="status-select">New Status:</label>
+          <select id="status-select" [(ngModel)]="selectedStatus" [disabled]="updating()">
+            <option *ngFor="let status of orderStatuses" [value]="status">{{ status }}</option>
+          </select>
+        </div>
+
+        <button
+          (click)="updateStatus()"
+          [disabled]="updating() || selectedStatus() === order()?.orderStatus"
+          class="btn-update">
+          {{ updating() ? 'Updating...' : 'Update Status' }}
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

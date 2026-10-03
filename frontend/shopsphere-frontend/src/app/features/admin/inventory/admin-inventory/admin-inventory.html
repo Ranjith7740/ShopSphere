@@ -1,0 +1,80 @@
+<div class="container">
+  <div class="header">
+    <h1>Inventory</h1>
+  </div>
+
+  <div class="filters">
+    <div class="search-box">
+      <input [formControl]="searchControl" type="text" placeholder="Search products...">
+    </div>
+
+    <div class="filter-group">
+      <select (change)="onCategoryChange($any($event).target.value)">
+        <option value="">All Categories</option>
+        <option *ngFor="let cat of categories()" [value]="cat.id">{{ cat.name }}</option>
+      </select>
+      <button (click)="clearFilters()" class="btn-secondary">Clear Filters</button>
+    </div>
+  </div>
+
+  <div *ngIf="loading()" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading inventory...</p>
+  </div>
+
+  <div *ngIf="!loading() && errorMessage()" class="error-state">
+    <p>{{ errorMessage() }}</p>
+    <button (click)="loadInventory()" class="btn-secondary">Retry</button>
+  </div>
+
+  <div *ngIf="!loading() && !errorMessage()" class="table-container">
+    <table *ngIf="products().length > 0; else emptyState">
+      <thead>
+        <tr>
+          <th>Product Name</th>
+          <th>Category</th>
+          <th>Current Stock</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of products()">
+          <td>{{ product.name }}</td>
+          <td>{{ product.categoryName }}</td>
+          <td>
+            <div *ngIf="editingProductId() !== product.id" class="stock-value">
+              {{ product.stockQuantity }}
+            </div>
+            <div *ngIf="editingProductId() === product.id" class="edit-box">
+              <input type="number" [(ngModel)]="editStockValue" min="0">
+              <button (click)="saveStock(product.id)" class="btn-save">✓</button>
+              <button (click)="cancelEdit()" class="btn-cancel">✕</button>
+            </div>
+          </td>
+          <td>
+            <span class="status-badge" [class]="getInventoryStatus(product.stockQuantity).class">
+              {{ getInventoryStatus(product.stockQuantity).label }}
+            </span>
+          </td>
+          <td>
+            <button *ngIf="editingProductId() !== product.id" (click)="startEdit(product)" class="btn-action">Update Stock</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <p>{{ searchControl.value || selectedCategoryId() ? 'No inventory items match your current filters.' : 'No inventory items found.' }}</p>
+        <button (click)="loadInventory()" class="btn-secondary">Refresh</button>
+      </div>
+    </ng-template>
+  </div>
+
+  <div *ngIf="!loading() && products().length > 0" class="pagination">
+    <button [disabled]="currentPage() === 0" (click)="goToPage(currentPage() - 1)">Previous</button>
+    <span>Page {{ currentPage() + 1 }} of {{ totalPages() }}</span>
+    <button [disabled]="currentPage() >= totalPages() - 1" (click)="goToPage(currentPage() + 1)">Next</button>
+  </div>
+</div>

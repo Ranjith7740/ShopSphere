@@ -1,0 +1,53 @@
+<div class="container">
+  <div class="header">
+    <h1>Categories</h1>
+    <a routerLink="/admin/categories/new" class="btn-primary">+ Add Category</a>
+  </div>
+
+  <div *ngIf="loading()" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading categories...</p>
+  </div>
+
+  <div *ngIf="!loading() && errorMessage()" class="error-state">
+    <p>{{ errorMessage() }}</p>
+    <button (click)="loadCategories()" class="btn-secondary">Retry</button>
+  </div>
+
+  <div *ngIf="!loading() && !errorMessage()" class="table-container">
+    <table *ngIf="categories().length > 0; else emptyState">
+      <thead>
+        <tr>
+          <th>Category Name</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cat of categories()">
+          <td>{{ cat.name }}</td>
+          <td>{{ cat.description }}</td>
+          <td>
+            <span class="status-badge" [class.active]="cat.status === 'ACTIVE'" [class.inactive]="cat.status === 'INACTIVE'">
+              {{ cat.status }}
+            </span>
+          </td>
+          <td>
+            <div class="actions">
+              <a [routerLink]="['/admin/categories', cat.id, 'edit']" class="btn-action edit">Edit</a>
+              <button *ngIf="cat.status === 'ACTIVE'" (click)="deactivateCategory(cat.id)" class="btn-action deactivate">Deactivate</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <p>No categories found.</p>
+        <button (click)="loadCategories()" class="btn-secondary">Refresh</button>
+      </div>
+    </ng-template>
+  </div>
+</div>

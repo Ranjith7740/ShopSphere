@@ -15,11 +15,19 @@ export const roleGuard: CanActivateFn = (route) => {
 
   const requiredRole = route.data['role'] as Role | undefined;
 
+  console.log('ROLE GUARD');
+  console.log('isLoggedIn:', authService.isLoggedIn());
+  console.log('token:', !!localStorage.getItem('shopsphere_access_token'));
+  console.log('role:', authService.getRole());
+  console.log('requiredRole:', requiredRole);
+
   if (!authService.isLoggedIn()) {
+    console.log('REDIRECTING TO LOGIN');
     return router.createUrlTree(['/login']);
   }
 
   if (requiredRole && authService.getRole() !== requiredRole) {
+    console.log('REDIRECTING TO HOME - ROLE MISMATCH');
     return router.createUrlTree(['/']);
   }
 

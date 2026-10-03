@@ -45,6 +45,16 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
 
     @Transactional
+    public ProductResponse updateInventory(Long productId, Integer stockQuantity) {
+        if (stockQuantity == null || stockQuantity < 0) {
+            throw new IllegalArgumentException("Stock quantity must be non-negative");
+        }
+        Product product = findById(productId);
+        product.setStockQuantity(stockQuantity);
+        return ProductResponse.fromEntity(productRepository.save(product));
+    }
+
+    @Transactional
     public ProductResponse createProduct(CreateProductRequest request) {
         Category category = resolveActiveCategory(request.categoryId());
 
@@ -90,6 +100,26 @@ public class ProductService {
     }
 
     @Transactional
+    public ProductPageResponse searchProducts(String search,
+                                               Long categoryId,
+                                               BigDecimal minPrice,
+                                               BigDecimal maxPrice,
+                                               ProductStatus status,
+                                               String sort,
+                                               int page,
+                                               int size) {
+        validatePagination(page, size);
+        Pageable pageable = PageRequest.of(page, size, parseSort(sort));
+        Specification<Product> specification =
+                ProductSpecifications.search(search, categoryId, minPrice, maxPrice, status);
+
+        Page<ProductResponse> responsePage = productRepository.findAll(specification, pageable)
+                .map(ProductResponse::fromEntity);
+
+        return ProductPageResponse.fromPage(responsePage);
+    }
+
+    @Transactional
     public ProductPageResponse searchActiveProducts(String search,
                                                        Long categoryId,
                                                        BigDecimal minPrice,
@@ -97,15 +127,7 @@ public class ProductService {
                                                        String sort,
                                                        int page,
                                                        int size) {
-        validatePagination(page, size);
-        Pageable pageable = PageRequest.of(page, size, parseSort(sort));
-        Specification<Product> specification =
-                ProductSpecifications.search(search, categoryId, minPrice, maxPrice, ProductStatus.ACTIVE);
-
-        Page<ProductResponse> responsePage = productRepository.findAll(specification, pageable)
-                .map(ProductResponse::fromEntity);
-
-        return ProductPageResponse.fromPage(responsePage);
+        return searchProducts(search, categoryId, minPrice, maxPrice, ProductStatus.ACTIVE, sort, page, size);
     }
 
     private void validatePagination(int page, int size) {
