@@ -36,7 +36,9 @@ public final class ProductSpecifications {
             }
 
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(criteriaBuilder.equal(root.get("status"), status));
+            if (status != null) {
+                predicates.add(criteriaBuilder.equal(root.get("status"), status));
+            }
 
             if (categoryId != null) {
                 predicates.add(criteriaBuilder.equal(root.get("category").get("id"), categoryId));

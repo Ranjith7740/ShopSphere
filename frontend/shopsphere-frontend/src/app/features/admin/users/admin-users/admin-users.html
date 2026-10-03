@@ -1,0 +1,61 @@
+<div class="container">
+  <div class="header">
+    <h1>Customers</h1>
+    <div class="search-box">
+      <input [formControl]="searchControl" type="text" placeholder="Search customers by name or email...">
+      <button (click)="clearSearch()" class="btn-clear" *ngIf="searchControl.value">Clear</button>
+    </div>
+  </div>
+
+  <div *ngIf="loading()" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading customers...</p>
+  </div>
+
+  <div *ngIf="!loading() && errorMessage()" class="error-state">
+    <p>{{ errorMessage() }}</p>
+    <button (click)="loadUsers()" class="btn-secondary">Retry</button>
+  </div>
+
+  <div *ngIf="!loading() && !errorMessage()" class="table-container">
+    <table *ngIf="users().length > 0; else emptyState">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Status</th>
+          <th>Created Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users()">
+          <td>{{ user.id }}</td>
+          <td>{{ user.name }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.phone || 'N/A' }}</td>
+          <td>
+            <span class="status-badge" [class]="'status-' + user.status?.toLowerCase()">
+              {{ user.status }}
+            </span>
+          </td>
+          <td>{{ user.createdAt | date:'shortDate' }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <p>{{ searchControl.value ? 'No customers match your current search.' : 'No customers found.' }}</p>
+        <button (click)="loadUsers()" class="btn-secondary">Refresh</button>
+      </div>
+    </ng-template>
+  </div>
+
+  <div *ngIf="!loading() && users().length > 0" class="pagination">
+    <button [disabled]="currentPage() === 0" (click)="goToPage(currentPage() - 1)">Previous</button>
+    <span>Page {{ currentPage() + 1 }} of {{ totalPages() }}</span>
+    <button [disabled]="currentPage() >= totalPages() - 1" (click)="goToPage(currentPage() + 1)">Next</button>
+  </div>
+</div>

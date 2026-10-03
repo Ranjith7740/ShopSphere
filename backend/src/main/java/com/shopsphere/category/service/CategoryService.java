@@ -25,6 +25,16 @@ public class CategoryService {
                 .toList();
     }
 
+    public List<CategoryResponse> getAllCategories() {
+        return categoryRepository.findAll().stream()
+                .map(CategoryResponse::fromEntity)
+                .toList();
+    }
+
+    public CategoryResponse getCategoryById(Long categoryId) {
+        return CategoryResponse.fromEntity(findById(categoryId));
+    }
+
     public CategoryResponse createCategory(CreateCategoryRequest request) {
         if (categoryRepository.existsByName(request.name())) {
             throw new DuplicateCategoryException(request.name());

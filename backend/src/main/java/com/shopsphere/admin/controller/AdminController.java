@@ -1,22 +1,33 @@
 package com.shopsphere.admin.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.shopsphere.user.dto.UserPageResponse;
+import com.shopsphere.user.service.AdminUserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
-/**
- * Placeholder endpoint that exists only to exercise the /api/admin/** authorization
- * rule (ROLE_ADMIN required). Real admin business functionality is out of scope
- * for Step 12 and will be added in later steps.
- */
 @RestController
 @RequestMapping("/api/admin")
+@RequiredArgsConstructor
 public class AdminController {
 
+    private final AdminUserService adminUserService;
+
     @GetMapping("/ping")
-    public Map<String, String> ping() {
-        return Map.of("message", "Admin access confirmed");
+    public java.util.Map<String, String> ping() {
+        return java.util.Map.of("message", "Admin access confirmed");
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<UserPageResponse> getUsers(
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return ResponseEntity.ok(adminUserService.getUsers(search, pageable));
     }
 }

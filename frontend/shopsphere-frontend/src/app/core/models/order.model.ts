@@ -48,6 +48,10 @@ export interface PlaceOrderRequest {
   addressId: number;
 }
 
+export interface OrderStatusUpdateRequest {
+  status: OrderStatus;
+}
+
 export interface Page<T> {
   content: T[];
   totalPages: number;

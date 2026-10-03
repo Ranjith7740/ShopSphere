@@ -1,0 +1,65 @@
+<div class="container">
+  <div class="header">
+    <h1>Orders</h1>
+  </div>
+
+  <div *ngIf="loading()" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading orders...</p>
+  </div>
+
+  <div *ngIf="!loading() && errorMessage()" class="error-state">
+    <p>{{ errorMessage() }}</p>
+    <button (click)="loadOrders()" class="btn-secondary">Retry</button>
+  </div>
+
+  <div *ngIf="!loading() && !errorMessage()" class="table-container">
+    <table *ngIf="orders().length > 0; else emptyState">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Customer</th>
+          <th>Total</th>
+          <th>Payment</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let order of orders()">
+          <td>#{{ order.id }}</td>
+          <td>{{ order.shippingAddress.fullName }}</td>
+          <td>{{ order.totalAmount | currency }}</td>
+          <td>
+            <span class="status-badge" [class]="'payment-' + order.paymentStatus.toLowerCase()">
+              {{ order.paymentStatus }}
+            </span>
+          </td>
+          <td>
+            <span class="status-badge" [class]="'status-' + order.orderStatus.toLowerCase()">
+              {{ order.orderStatus }}
+            </span>
+          </td>
+          <td>{{ order.createdAt | date:'shortDate' }}</td>
+          <td>
+            <a [routerLink]="['/admin/orders', order.id]" class="btn-action">View Details</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <p>No orders found.</p>
+        <button (click)="loadOrders()" class="btn-secondary">Refresh</button>
+      </div>
+    </ng-template>
+  </div>
+
+  <div *ngIf="!loading() && orders().length > 0" class="pagination">
+    <button [disabled]="currentPage() === 0" (click)="goToPage(currentPage() - 1)">Previous</button>
+    <span>Page {{ currentPage() + 1 }} of {{ totalPages() }}</span>
+    <button [disabled]="currentPage() >= totalPages() - 1" (click)="goToPage(currentPage() + 1)">Next</button>
+  </div>
+</div>
